@@ -1,4 +1,11 @@
-import random
+from random import randint
+from tkinter import messagebox
+from tkinter import Tk
+
+from .gui import LengthWindow
+from .gui import MainWindow
+from .gui import PickPlayerWindow
+from .gui import PlayerWindow
 from .player import Player
 from .player import PlayerInvalidError
 from .player import PlayerTakenError
@@ -6,87 +13,23 @@ from .player import PlayerTakenError
 
 class Round:
     def __init__(self, game):
-        self.player_name = None
         self.game = game
-        self._reset_players()
 
     def play(self):
-        # Round ends when all players have played; i.e. self.players_played
-        # is populated and self.players_left is empty.
-        while len(self.players_left) > 0 or self.game.current_round == 1:
+        while not self._round_is_complete():
             self.game.show_info(f"Round {self.game.current_round}")
 
-            # Wait for player name.
-            # If player exists and has unapplied changes, apply them now.
-            # If round 1, create player if it doesn't exist, play turn.
-            # If subsequent round, ignore player if it doesn't exist, play turn if it does.
-
             # Get player name from user.
-            if self.player_name is None:
-                self.player_name = self.game.ask_player()
-            current_player = None
-
-            # Create player on round 1 if non-existent.
-            if self.game.current_round == 1:
-                if self.game._get_player(self.player_name, self.game.players):
-                    # Go to next round.
-                    self._reset_players(keep_player_name=True)
-                    self.game.current_round += 1
-                    continue
-
-                # Add new player if 1st round.
-                new_player = None
-                while new_player is None:
-                    player = Player(self.player_name)
-                    if not player._is_in_game(self.game):
-                        self.game.show_info(f"Creating new player: {self.player_name}")
-                        new_player = player
-                        current_player = new_player
-                        self.game.players.append(new_player)
-                        self.players_left.append(new_player)
-                    else:
-                        new_player = False
-                # if new_player is False:
-                #     continue
-
-            # Define current player.
-            if current_player is None:
-                current_player = self.game._get_player(self.player_name, self.players_left)
-
-            if current_player is not None:
-                # Check for unapplied changes for player.
-                self.game.show_info(f"Updating dollars and life_points for {str(current_player)}.")
-                current_player._update_dollars()
-                current_player._update_life_points()
-                
-                # Offer to start the turn.
-                if self.game.ask_start_turn() is True:
-                    self._do_turn(current_player)
-            
-            self.player_name = None
+            player_name = self.game.ask_player()
+            current_player = self.game._get_player(player_name, self.game.players)
+            current_player.play()
         
         # Increment round number at the end.
         self.game.current_round += 1
 
-    def _do_turn(self, player):
-        player._update_dollars()
-        player._update_life_points()
-        
-        roll_result = self.game._roll()
-        player.earn_salary()
-        self.game.show_assets(player)
-        self.game.show_info(f"You rolled '{roll_result}'")
-        if self.game.ask_update_player():
-            raise NotImplementedError
-
-        self.players_left.remove(player)
-        self.players_played.append(player)
-
-    def _reset_players(self, keep_player_name=False):
-        if not keep_player_name:
-            self.player_name = None
-        self.players_left = self.game.players.copy()
-        self.players_played = []
+    def _round_is_complete(self):
+        # All players have taken as many turns as rounds that have been played.
+        return all([p.turns_taken == self.game.current_round for p in self.game.players])
 
 
 class Game:
@@ -97,10 +40,10 @@ class Game:
         self.current_round = 1
 
         self.all_colors = ['red', 'yellow', 'green', 'blue']
-        self.all_players = [Player(c) for c in self.all_colors]
 
-        self.available_players = self.all_players.copy()
-        self.players = []
+        self.players = None
+        self._ask_which_players_text = "Which colors will be playing?"
+        self._ask_which_players_help = f'Valid colors are {', '.join(self.all_colors)}.'
         self._ask_player_text = "Choose player color"
         self._ask_player_help = "Please choose an acceptable color."
 
@@ -110,40 +53,58 @@ class Game:
     def play(self):
         raise NotImplementedError
 
-    def ask_player(self):
+    def ask_length(self) -> str:
         raise NotImplementedError
 
-    def ask_length(self):
+    def ask_player(self) -> str:
         raise NotImplementedError
 
-    def ask_start_turn(self):
+    def ask_player_action(self, player):
+        raise NotImplementedError
+
+    def ask_which_players(self) -> str:
         raise NotImplementedError
 
     def ask_update_player(self):
         raise NotImplementedError
 
-    def show_assets(self):
+    def show_assets(self, player):
         raise NotImplementedError
 
-    def show_error(self):
+    def show_error(self, text):
         raise NotImplementedError
 
-    def show_info(self):
+    def show_info(self, text):
         raise NotImplementedError
 
-    def _roll(self, max=10, min=1):
-        return random.randint(min, max)
+    def _chance(self):
+        return self._roll(min=0, max=2)
+    
+    def _lottery(self):
+        return self._roll(min=1, max=10)
+
+    def _roll(self, min=1, max=10):
+        return randint(min, max)
 
     def _ask_length(self):
         length = None
         while length is None:
             try:
                 user_input = self.ask_length()
-                user_input = self._verify_length(user_input)
-                length = user_input
+                length = self._verify_length(user_input)
             except (TypeError, ValueError):
-                print(self._ask_length_help)
+                self.show_info(self._ask_length_help)
         return length
+
+    def _ask_which_players(self):
+        which_players = None
+        while which_players is None:
+            try:
+                user_input = self.ask_which_players()
+                which_players = self._verify_which_players(user_input)
+            except (TypeError, ValueError):
+                self.show_info(self._ask_which_players_help)
+        return which_players
 
     def _verify_length(self, user_input):
         try:
@@ -153,6 +114,15 @@ class Game:
         if user_input < 1 or user_input > 20:
             raise ValueError
         return user_input
+
+    def _verify_which_players(self, user_input):
+        user_input_items = user_input.lower().replace(',', ' ').split()
+        # print(f"{user_input_items=}")
+        players = []
+        for c in self.all_colors:
+            if c.lower() in user_input_items:
+                players.append(Player(self, c))
+        return players
 
     def _ask_player(self):
         player = None
@@ -181,8 +151,6 @@ class Game:
 class Cli(Game):
     def __init__(self):
         super().__init__()
-        if self.length is None:
-            self.length = self._ask_length()
 
     def ask_length(self) -> str:
         return self._ask_value(self._ask_length_text, vtype=int)
@@ -190,19 +158,31 @@ class Cli(Game):
     def ask_player(self) -> str:
         return self._ask_value(self._ask_player_text, vtype=str)
 
+    def ask_player_action(self, player):
+        return self._ask_player_action(player)
+
     def ask_update_player(self) -> bool:
         return self._ask_yes_no(self._ask_player_changes_text)
 
-    def ask_start_turn(self) -> bool:
-        return self._ask_yes_no(self._ask_start_turn_text)
+    def ask_which_players(self) -> list:
+        return self._ask_value(self._ask_which_players_text)
 
     def show_info(self, text) -> None:
         print(text)
 
     def play(self):
+        if self.length is None:
+            self.length = self._ask_length()
+        
+        if self.players is None:
+            self.players = self._ask_which_players()
+
         if self.current_round < self.length:
             r = Round(self)
             r.play()
+
+    def _ask_player_action(self, player) -> str:
+        return input(f"Choose action for {str(player)}: {', '.join(player.actions.keys())}: ")
 
     def _ask_value(self, question, vtype=str) -> str|int:
         return vtype(input(f"{question}: "))
@@ -221,4 +201,49 @@ class Cli(Game):
 
 
 class Gui(Game):
-    pass
+    def __init__(self):
+        super().__init__()
+        self.root = Tk()
+        self.win = MainWindow(self)
+        self.root.bind('<Visibility>', self._check_length)
+
+    def play(self):
+        self.root.mainloop()
+
+    def ask_length(self):
+        w = LengthWindow(self._ask_length_text)
+        w.win.wait_window()
+        return w.value
+
+    def ask_player(self):
+        w = PickPlayerWindow()
+        w.win.wait_window()
+        return w.value
+
+    def ask_start_turn(self):
+        return self._ask_yes_no(self._ask_start_turn_text)
+
+    def ask_update_player(self):
+        return self._ask_yes_no(self._ask_player_changes_text)
+
+    def show_assets(self, player):
+        p = PlayerWindow(str(player))
+        # p.win.wait_window()
+
+    def show_error(self, text):
+        messagebox.showerror("Error", text)
+
+    def show_info(self, text):
+        messagebox.showinfo("Info", text)
+    
+    def _ask_yes_no(self, text):
+        return messagebox.askyesno("Question", text)
+
+    def _check_length(self, evt):
+        self.root.unbind('<Visibility>')
+        if self.length is None:
+            self.length = self._ask_length()
+        
+        if self.current_round < self.length:
+            r = Round(self)
+            r.play()
