@@ -1,15 +1,14 @@
 import sys
 from .game import Cli
-# from .game import Gui
-from .guiapp import LifePodApp
+from .game import Gui
 
 
 def main():
     if len(sys.argv) > 1 and 'cli' in sys.argv:
         game = Cli()
-        game.play()
     else:
-        LifePodApp().run()
+        game = Gui()
+    game.play()
 
 
 if __name__ == '__main__':

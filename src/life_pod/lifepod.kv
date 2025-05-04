@@ -1,13 +1,20 @@
-#:kivy 1.0
+#:kivy 2.0
 
+<LifePod>:
+    display0: display0
+    display1: display1
+    display2: display2
+    player: player
 
-FloatLayout:
     canvas.before:
         Color:
             rgba: (1, 1, 1, 1)
         Rectangle:
             pos: self.pos
             size: self.size
+
+    PlayerChooser:
+        id: player
 
     BoxLayout: # whole center area
         spacing: 5
@@ -26,33 +33,17 @@ FloatLayout:
                     id: spin
                 UndoButton:
                     id: undo
-            ScreenBoxLayout: # screen frame
+
+            # display screen
+            ScreenBoxLayout:
                 orientation: 'vertical'
-                ScreenBoxLayout:
-                    ScreenLabel:
-                        text: "H"
-                    ScreenLabel:
-                        text: "M"
-                    ScreenLabel:
-                        text: "E"
-                    ScreenLabel:
-                        text: "S"
-                    ScreenLabel:
-                        text: "M"
-                    ScreenLabel:
-                        text: "C"
-                ScreenBoxLayout:
-                    ScreenLabel:
-                        id: dollars
-                        text_size: self.size
-                        halign: 'right'
-                        text: "0"
-                ScreenBoxLayout:
-                    ScreenLabel:
-                        id: life_points
-                        text_size: self.size
-                        halign: 'right'
-                        text: "0"
+                ScreenLabel:  # used to display physical assets
+                    id: display0
+                ScreenLabel:  # used to display messages and dollars
+                    id: display1
+                ScreenLabel:  # used to echo user input
+                    id: display2
+
             BlueBoxLayout: # bottom 2 buttons
                 DollarUnitButton:
                     id: dollar_unit
@@ -63,70 +54,48 @@ FloatLayout:
 
     # Number buttons
     NumButton:
-        idx: 0
-        id: self.get_id()
-        text: self.get_text()
-        pos_hint: self.get_pos_hint()
+        text: "0"
+        pos_hint: self._get_pos_hint()
 
     NumButton:
-        idx: 1
-        id: self.get_id()
-        text: self.get_text()
-        pos_hint: self.get_pos_hint()
+        text: "1"
+        pos_hint: self._get_pos_hint()
 
     NumButton:
-        idx: 2
-        id: self.get_id()
-        text: self.get_text()
-        pos_hint: self.get_pos_hint()
+        text: "2"
+        pos_hint: self._get_pos_hint()
 
     NumButton:
-        idx: 3
-        id: self.get_id()
-        text: self.get_text()
-        pos_hint: self.get_pos_hint()
+        text: "3"
+        pos_hint: self._get_pos_hint()
 
     NumButton:
-        idx: 4
-        id: self.get_id()
-        text: self.get_text()
-        pos_hint: self.get_pos_hint()
+        text: "4"
+        pos_hint: self._get_pos_hint()
 
     NumButton:
-        idx: 5
-        id: self.get_id()
-        text: self.get_text()
-        pos_hint: self.get_pos_hint()
+        text: "5"
+        pos_hint: self._get_pos_hint()
 
     NumButton:
-        idx: 6
-        id: self.get_id()
-        text: self.get_text()
-        pos_hint: self.get_pos_hint()
+        text: "6"
+        pos_hint: self._get_pos_hint()
 
     NumButton:
-        idx: 7
-        id: self.get_id()
-        text: self.get_text()
-        pos_hint: self.get_pos_hint()
+        text: "7"
+        pos_hint: self._get_pos_hint()
 
     NumButton:
-        idx: 8
-        id: self.get_id()
-        text: self.get_text()
-        pos_hint: self.get_pos_hint()
+        text: "8"
+        pos_hint: self._get_pos_hint()
 
     NumButton:
-        idx: 9
-        id: self.get_id()
-        text: self.get_text()
-        pos_hint: self.get_pos_hint()
+        text: "9"
+        pos_hint: self._get_pos_hint()
 
     NumButton:
-        idx: 10
-        id: self.get_id()
-        text: self.get_text()
-        pos_hint: self.get_pos_hint()
+        text: "10"
+        pos_hint: self._get_pos_hint()
 
 
 <BlueBoxLayout@BoxLayout>:
@@ -147,29 +116,29 @@ FloatLayout:
     color: (0, 0, 0, 1)
 
 
-<BlueButton@Button>:
+<BlueButton>:
     background_normal: ''
     background_color: (0.2, 0.75, 1, 1)
     color: (0, 0, 0, 1)
     bold: True
 
-<EnterButton@BlueButton>:
+<EnterButton>:
     text: "Enter"
 
-<SpinButton@BlueButton>:
+<SpinButton>:
     text: "Spin"
 
-<UndoButton@BlueButton>:
+<UndoButton>:
     text: "Undo"
 
-<DollarUnitButton@BlueButton>:
+<DollarUnitButton>:
     text: "$"
 
-<LifePointsUnitButton@BlueButton>:
+<LifePointsUnitButton>:
     text: "Life Points"
 
 
-<RedButton@Button>:
+<RedButton>:
     background_normal: ''
     background_color: (1, 0, 0.2, 1)
     color: (0, 0, 0, 1)
@@ -178,11 +147,12 @@ FloatLayout:
     padding: 5
     pos_hint: {'center_x': .5, 'center_y': .5}
 
-<MinusButton@RedButton>
+<MinusButton>
     text: "-"
 
-<PlusButton@RedButton>
+<PlusButton>
     text: "+"
+
 
 <NumButton>:
     background_normal: ''
@@ -190,3 +160,82 @@ FloatLayout:
     color: (0, 0, 0, 1)
     bold: True
     size_hint: (0.05, 0.05)
+
+
+<PlayerChooser@BoxLayout>
+    size_hint: (0.1, 0.20)
+    pos_hint: {'top': 1, 'right': 1}
+    orientation: 'vertical'
+    Label:
+        size_hint: (None, 0.30)
+        color: (0, 0, 0, 1)
+        font_size: 20
+        text: 'Player'
+    BoxLayout:
+        size_hint: (None, 0.70)
+        BoxLayout:
+            size_hint: (0.25, None)
+            orientation: 'vertical'
+            PlayerRadio:
+            PlayerRadio:
+            PlayerRadio:
+            PlayerRadio:
+
+        BoxLayout:
+            size_hint: (0.75, None)
+            orientation: 'vertical'
+            PlayerRed:
+            PlayerYellow:
+            PlayerGreen:
+            PlayerBlue:
+
+
+<PlayerRadio@CheckBox>:
+    group: 'player'
+
+<PlayerLabel@Label>:
+    font_size: 12
+
+<PlayerRed@PlayerLabel>
+    text: "red"
+    background_color: (1, 0, 0, 1)
+    color: self.background_color
+    canvas.before:
+        Color:
+            rgba: self.background_color
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
+<PlayerYellow@PlayerLabel>
+    text: "yellow"
+    background_color: (0, 1, 1, 1)
+    color: self.background_color
+    canvas.before:
+        Color:
+            rgba: self.background_color
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
+<PlayerGreen@PlayerLabel>
+    text: "green"
+    background_color: (0, 1, 0, 1)
+    color: self.background_color
+    canvas.before:
+        Color:
+            rgba: self.background_color
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
+<PlayerBlue@PlayerLabel>
+    text: "blue"
+    background_color: (0, 0, 1, 1)
+    color: self.background_color
+    canvas.before:
+        Color:
+            rgba: self.background_color
+        Rectangle:
+            size: self.size
+            pos: self.pos

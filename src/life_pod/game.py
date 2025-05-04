@@ -2,10 +2,11 @@ from random import randint
 from tkinter import messagebox
 from tkinter import Tk
 
-from .gui import LengthWindow
-from .gui import MainWindow
-from .gui import PickPlayerWindow
-from .gui import PlayerWindow
+from .gui import LifePodApp
+from .tkgui import LengthWindow
+from .tkgui import MainWindow
+from .tkgui import PickPlayerWindow
+from .tkgui import PlayerWindow
 from .player import Player
 from .player import PlayerInvalidError
 from .player import PlayerTakenError
@@ -15,7 +16,11 @@ class Round:
     def __init__(self, game):
         self.game = game
 
-    def play(self):
+    def start_turn(self):
+        if not self._round_is_complete():
+            player_name = self.game.ask_player()
+
+    def play_loop(self):
         while not self._round_is_complete():
             self.game.show_info(f"Round {self.game.current_round}")
 
@@ -179,7 +184,7 @@ class Cli(Game):
 
         if self.current_round < self.length:
             r = Round(self)
-            r.play()
+            r.play_loop()
 
     def _ask_player_action(self, player) -> str:
         return input(f"Choose action for {str(player)}: {', '.join(player.actions.keys())}: ")
@@ -200,7 +205,7 @@ class Cli(Game):
         print()
 
 
-class Gui(Game):
+class TkGui(Game):
     def __init__(self):
         super().__init__()
         self.root = Tk()
@@ -246,4 +251,27 @@ class Gui(Game):
         
         if self.current_round < self.length:
             r = Round(self)
-            r.play()
+            r.play_loop()
+
+
+class Gui(Game):
+    def __init__(self):
+        super().__init__()
+        self.app = LifePodApp(self)
+
+    def play(self):
+        self.app.run()
+
+    def ask_length(self):
+        self.app.root_window.children[0]._ask_length(self._ask_length_text)
+
+    def ask_player(self):
+        print('player?')
+
+    def _check_length(self):
+        if self.length is None:
+            self.length = self.ask_length()
+        
+        if self.current_round < self.length:
+            r = Round(self)
+            r.start_turn()
