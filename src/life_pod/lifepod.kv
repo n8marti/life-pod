@@ -146,6 +146,7 @@
     size_hint: 0.1, 0.15
     padding: 5
     pos_hint: {'center_x': .5, 'center_y': .5}
+    font_size: 20
 
 <MinusButton>
     text: "-"
@@ -163,38 +164,56 @@
 
 
 <PlayerChooser@BoxLayout>
-    size_hint: (0.1, 0.20)
-    pos_hint: {'top': 1, 'right': 1}
+    size_hint: (0.15, 0.25)
+    pos_hint: {'right': 0.95, 'top': 1}
     orientation: 'vertical'
+    spacing: 5
     Label:
-        size_hint: (None, 0.30)
+        #size_hint: (None, 0.30)
         color: (0, 0, 0, 1)
         font_size: 20
+        halign: 'left'
         text: 'Player'
-    BoxLayout:
-        size_hint: (None, 0.70)
-        BoxLayout:
-            size_hint: (0.25, None)
-            orientation: 'vertical'
-            PlayerRadio:
-            PlayerRadio:
-            PlayerRadio:
-            PlayerRadio:
-
-        BoxLayout:
-            size_hint: (0.75, None)
-            orientation: 'vertical'
-            PlayerRed:
-            PlayerYellow:
-            PlayerGreen:
-            PlayerBlue:
+    PlayerChoiceNone:
+    PlayerChoiceRed:
+    PlayerChoiceYellow:
+    PlayerChoiceGreen:
+    PlayerChoiceBlue:
 
 
 <PlayerRadio@CheckBox>:
     group: 'player'
+    color: (0.75, 0.75, 0.75, 1)
 
 <PlayerLabel@Label>:
-    font_size: 12
+    padding: 3
+    font_size: 18
+    halign: 'left'
+
+<PlayerChoiceNone@BoxLayout>
+    PlayerRadio:
+        active: True
+    PlayerNone:
+
+<PlayerChoiceRed@BoxLayout>
+    PlayerRadio:
+    PlayerRed:
+
+<PlayerChoiceYellow@BoxLayout>
+    PlayerRadio:
+    PlayerYellow:
+
+<PlayerChoiceGreen@BoxLayout>
+    PlayerRadio:
+    PlayerGreen:
+
+<PlayerChoiceBlue@BoxLayout>
+    PlayerRadio:
+    PlayerBlue:
+
+<PlayerNone@PlayerLabel>
+    text: "None"
+    color: (0, 0, 0, 1)
 
 <PlayerRed@PlayerLabel>
     text: "red"
@@ -209,7 +228,7 @@
 
 <PlayerYellow@PlayerLabel>
     text: "yellow"
-    background_color: (0, 1, 1, 1)
+    background_color: (1, 1, 0, 1)
     color: self.background_color
     canvas.before:
         Color:
