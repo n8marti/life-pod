@@ -1,11 +1,6 @@
 #:kivy 2.0
 
-<LifePod>:
-    display0: display0
-    display1: display1
-    display2: display2
-    player: player
-
+<LifePodWin>:
     canvas.before:
         Color:
             rgba: (1, 1, 1, 1)
@@ -14,43 +9,88 @@
             size: self.size
 
     PlayerChooser:
-        id: player
 
     BoxLayout: # whole center area
         spacing: 5
         size_hint: 0.5, 0.5
         pos_hint: {'center_x': .5, 'center_y': .5}
         MinusButton:
-            id: minus
         BoxLayout: # blue buttons & screen frame
             spacing: 5
             size_hint: 0.6, 1.0
             orientation: 'vertical'
             BlueBoxLayout: # top 3 buttons
                 EnterButton:
-                    id: enter
                 SpinButton:
-                    id: spin
                 UndoButton:
-                    id: undo
 
             # display screen
             ScreenBoxLayout:
                 orientation: 'vertical'
-                ScreenLabel:  # used to display physical assets
-                    id: display0
-                ScreenLabel:  # used to display messages and dollars
-                    id: display1
-                ScreenLabel:  # used to echo user input
-                    id: display2
+                ScreenBoxLayout:  # used to display physical assets
+                    size_hint_y: 1/5
+                    ScreenImage:
+                        id: house_modest
+                        size_hint_x: 1/6
+                        source: "img/blank.png"
+                    ScreenImage:
+                        id: house_midsized
+                        size_hint_x: 1/6
+                        source: "img/blank.png"
+                    ScreenImage:
+                        id: house_mansion
+                        size_hint_x: 1/6
+                        source: "img/blank.png"
+                    ScreenImage:
+                        id: car_economy
+                        size_hint_x: 1/6
+                        source: "img/blank.png"
+                    ScreenImage:
+                        id: car_sports
+                        size_hint_x: 1/6
+                        source: "img/blank.png"
+                    ScreenImage:
+                        size_hint_x: 1/12
+                        source: "img/blank.png"
+                    ScreenLabel:
+                        id: baby_count
+                        size_hint_x: 1/12
+                        text: "0"
+                ScreenBoxLayout:
+                    size_hint_y: 2/5
+                    ScreenLabel:
+                        size_hint_x: 1/10
+                        text: "$"
+                    ScreenLabel:  # used to display messages and dollars
+                        size_hint_x: 8/10
+                        id: display1
+                    ScreenBoxLayout:
+                        size_hint_x: 1/10
+                        orientation: 'vertical'
+                        ScreenImage:  # wedding ring
+                            source: "img/blank.png"
+                        ScreenLabel:  # +/-
+                            id: sign
+                ScreenBoxLayout:
+                    size_hint_y: 2/5
+                    ScreenImage:  # heart
+                        source: "img/blank.png"
+                        size_hint_x: 1/10
+                    ScreenLabel:  # used to echo user input
+                        id: display2
+                        size_hint_x: 8/10
+                    ScreenBoxLayout:
+                        size_hint_x: 1/10
+                        orientation: 'vertical'
+                        ScreenImage: # clock
+                            source: "img/blank.png"
+                        ScreenLabel:
+                            id: current_round
 
             BlueBoxLayout: # bottom 2 buttons
                 DollarUnitButton:
-                    id: dollar_unit
                 LifePointsUnitButton:
-                    id: life_points_unit
         PlusButton:
-            id: plus
 
     # Number buttons
     NumButton:
@@ -103,6 +143,16 @@
     spacing: 5
 
 
+<ScreenImage@Image>
+    canvas.before:
+        Color:
+            rgba: (0.6, 0.6, 0.6, 1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    fit_mode: "contain"
+
+
 <ScreenBoxLayout@BoxLayout>:
     canvas.before:
         Color:
@@ -113,6 +163,7 @@
 
 
 <ScreenLabel@Label>:
+    halign: 'right'
     color: (0, 0, 0, 1)
 
 
@@ -122,20 +173,25 @@
     color: (0, 0, 0, 1)
     bold: True
 
-<EnterButton>:
+<EnterButton@BlueButton>:
     text: "Enter"
+    on_press: app.root.handle_enter()
 
-<SpinButton>:
+<SpinButton@BlueButton>:
     text: "Spin"
+    on_press: app.root.handle_spin()
 
-<UndoButton>:
+<UndoButton@BlueButton>:
     text: "Undo"
+    on_press: app.root.handle_undo()
 
-<DollarUnitButton>:
+<DollarUnitButton@BlueButton>:
     text: "$"
+    on_press: app.root.handle_dollars()
 
-<LifePointsUnitButton>:
+<LifePointsUnitButton@BlueButton>:
     text: "Life Points"
+    on_press: app.root.handle_life_points()
 
 
 <RedButton>:
@@ -148,11 +204,13 @@
     pos_hint: {'center_x': .5, 'center_y': .5}
     font_size: 20
 
-<MinusButton>
+<MinusButton@RedButton>
     text: "-"
+    on_press: app.root.handle_minus()
 
-<PlusButton>
+<PlusButton@RedButton>
     text: "+"
+    on_press: app.root.handle_plus()
 
 
 <NumButton>:
@@ -161,6 +219,7 @@
     color: (0, 0, 0, 1)
     bold: True
     size_hint: (0.05, 0.05)
+    on_press: app.root.handle_num_input(self.text)
 
 
 <PlayerChooser@BoxLayout>
@@ -181,7 +240,7 @@
     PlayerChoiceBlue:
 
 
-<PlayerRadio@CheckBox>:
+<PlayerRadio@AppCheckBox>:
     group: 'player'
     color: (0.75, 0.75, 0.75, 1)
 
@@ -192,23 +251,33 @@
 
 <PlayerChoiceNone@BoxLayout>
     PlayerRadio:
+        name: "none"
         active: True
+        on_active: app.root.handle_player_choice(self)
     PlayerNone:
 
 <PlayerChoiceRed@BoxLayout>
     PlayerRadio:
+        name: "red"
+        on_active: app.root.handle_player_choice(self)
     PlayerRed:
 
 <PlayerChoiceYellow@BoxLayout>
     PlayerRadio:
+        name: "yellow"
+        on_active: app.root.handle_player_choice(self)
     PlayerYellow:
 
 <PlayerChoiceGreen@BoxLayout>
     PlayerRadio:
+        name: "green"
+        on_active: app.root.handle_player_choice(self)
     PlayerGreen:
 
 <PlayerChoiceBlue@BoxLayout>
     PlayerRadio:
+        name: "blue"
+        on_active: app.root.handle_player_choice(self)
     PlayerBlue:
 
 <PlayerNone@PlayerLabel>
@@ -216,7 +285,7 @@
     color: (0, 0, 0, 1)
 
 <PlayerRed@PlayerLabel>
-    text: "red"
+    #text: "red"
     background_color: (1, 0, 0, 1)
     color: self.background_color
     canvas.before:
@@ -227,7 +296,7 @@
             pos: self.pos
 
 <PlayerYellow@PlayerLabel>
-    text: "yellow"
+    #text: "yellow"
     background_color: (1, 1, 0, 1)
     color: self.background_color
     canvas.before:
@@ -238,7 +307,7 @@
             pos: self.pos
 
 <PlayerGreen@PlayerLabel>
-    text: "green"
+    #text: "green"
     background_color: (0, 1, 0, 1)
     color: self.background_color
     canvas.before:
@@ -249,7 +318,7 @@
             pos: self.pos
 
 <PlayerBlue@PlayerLabel>
-    text: "blue"
+    #text: "blue"
     background_color: (0, 0, 1, 1)
     color: self.background_color
     canvas.before:

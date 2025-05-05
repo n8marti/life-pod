@@ -10,38 +10,15 @@ from .tkgui import PlayerWindow
 from .player import Player
 from .player import PlayerInvalidError
 from .player import PlayerTakenError
-
-
-class Round:
-    def __init__(self, game):
-        self.game = game
-
-    def start_turn(self):
-        if not self._round_is_complete():
-            player_name = self.game.ask_player()
-
-    def play_loop(self):
-        while not self._round_is_complete():
-            self.game.show_info(f"Round {self.game.current_round}")
-
-            # Get player name from user.
-            player_name = self.game.ask_player()
-            current_player = self.game._get_player(player_name, self.game.players)
-            current_player.play()
-        
-        # Increment round number at the end.
-        self.game.current_round += 1
-
-    def _round_is_complete(self):
-        # All players have taken as many turns as rounds that have been played.
-        return all([p.turns_taken == self.game.current_round for p in self.game.players])
+from .round import Round
 
 
 class Game:
     def __init__(self):
         self.length = None
-        self._ask_length_text = "How many turns would you like to play?"
+        self._ask_length_text = "How many turns?"
         self._ask_length_help = "Please enter a whole number from 1-20."
+        self.current_player = None
         self.current_round = 1
 
         self.all_colors = ['red', 'yellow', 'green', 'blue']
@@ -81,6 +58,15 @@ class Game:
 
     def show_info(self, text):
         raise NotImplementedError
+
+    def _round_complete(self):
+        """All players have taken as many turns as rounds that have been played."""
+        return all([p.turns_taken == self.current_round for p in self.players])
+
+    def _game_complete(self):
+        """Current round is complete and current round is last round."""
+        if self._round_complete():
+            return self.current_round == self.length
 
     def _chance(self):
         return self._roll(min=0, max=2)
@@ -259,19 +245,27 @@ class Gui(Game):
         super().__init__()
         self.app = LifePodApp(self)
 
+        # Add all players initially; remove any that have not played by the
+        # start of Round 2.
+        self.players = []
+        for p in self.all_colors:
+            self._add_player(p)
+
     def play(self):
         self.app.run()
 
     def ask_length(self):
-        self.app.root_window.children[0]._ask_length(self._ask_length_text)
+        # self.app.root_window.children[0]._ask_length(self._ask_length_text)
+        self.app.ask_length(self._ask_length_text)
 
-    def ask_player(self):
-        print('player?')
+    def show_assets(self, player):
+        self.app.show_assets(player)
 
-    def _check_length(self):
-        if self.length is None:
-            self.length = self.ask_length()
-        
-        if self.current_round < self.length:
-            r = Round(self)
-            r.start_turn()
+    def _add_player(self, color):
+        self.players.append(Player(self, color))
+
+    def _remove_player(self, name):
+        if self.players:
+            for p in self.players[:]:
+                if p.name == name:
+                    self.players.remove(p)

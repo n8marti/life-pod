@@ -5,9 +5,9 @@ class Player:
     def __init__(self, game, color):
         self.game = game
         self.actions = {
-            'roll':  self._do_turn,
-            'update-dollars': self._update_dollars,
-            'update-life-points': self._update_life_points,
+            'roll':  self.do_turn,
+            'update-dollars': self.update_dollars,
+            'update-life-points': self.update_life_points,
             'done': self._end,
         }
         self.color = color
@@ -43,7 +43,7 @@ class Player:
             'degrees': self.degrees,
         }
 
-    def play(self):
+    def play_loop(self):
         self.__end = False
         while self.__end is not True:
             action = self.game.ask_player_action(self)
@@ -53,13 +53,13 @@ class Player:
     def __str__(self):
         return self.color
 
-    def _do_turn(self):
+    def do_turn(self):
         if self.turns_taken == self.game.current_round:
             self.game.show_info(f"{str(self)} already played this round.")
             return
 
-        self._update_dollars(auto=True)
-        self._update_life_points(auto=True)
+        self.update_dollars(auto=True)
+        self.update_life_points(auto=True)
         
         roll_result = self._roll()
         self.turns_taken += 1
@@ -79,7 +79,7 @@ class Player:
         min = 1
         return randint(min, 10)
 
-    def _update_dollars(self, auto=False):
+    def update_dollars(self, auto=False):
         if auto is False:
             value = int(self.game._ask_value("+ or - how many dollars?"))
             self.dollars += value
@@ -88,7 +88,7 @@ class Player:
             # if houses, cars, family, etc.; apply "interest" income or losses
             pass
 
-    def _update_life_points(self, auto=False):
+    def update_life_points(self, auto=False):
         if auto is False:
             value = int(self.game._ask_value("+ or - how many life points?"))
             self.life_points += value
