@@ -3,9 +3,11 @@ import kivy
 kivy.require('2.0.0')
 from kivy.app import App  # noqa: E402
 from kivy.clock import Clock  # noqa: E402
+from kivy.properties import NumericProperty  # noqa: E402
 from kivy.properties import StringProperty  # noqa: E402
 from kivy.uix.button import Button  # noqa: E402
 from kivy.uix.checkbox import CheckBox  # noqa: E402
+from kivy.uix.boxlayout import BoxLayout  # noqa: E402
 from kivy.uix.floatlayout import FloatLayout  # noqa: E402
 
 
@@ -14,13 +16,17 @@ class LifePodWin(FloatLayout):
         super().__init__(**kwargs)
         self.app = App.get_running_app()
 
-    def handle_num_input(self, value):
+    def handle_num_input(self, instance):
         """Add digit to pending user input."""
-        self._keypress(value)
+        self._keypress(instance.text)
         # TODO: Add alternate button functions.
         if self.app.active_input:
+            value = instance.text
             self.app.user_input += value
             self.ids.display2.text += value
+        else:
+            value = instance.parent.children[0].text
+            print(value)
         return value
 
     def handle_enter(self):
@@ -35,12 +41,19 @@ class LifePodWin(FloatLayout):
         # TODO: simplify to only show "spin" animation and return number.
         self._keypress('spin')
         if self.app.game.current_player is not None:
+            print(f"SPIN: round: {self.app.game.current_round}; turns taken: {self.app.game.current_player.turns_taken}")
+            if self.app.game.current_round == 1 and self.app.game.current_player.turns_taken == 1:
+                # Player is playing for the 2nd time; remove other players.
+                self.app.game._remove_nonplayers()
+
+            if self.app.game.round_is_complete():
+                self.app.game.start_next_round()
             self.app.game.current_player.do_turn()
 
     def handle_undo(self):
         """Remove last character from user input."""
         self._keypress('undo')
-        if len(self.ids.display2.text) > 1:
+        if len(self.ids.display2.text) > 0:
             self.ids.display2.text = self.ids.display2.text[:-1]
 
     def handle_minus(self):
@@ -72,20 +85,17 @@ class LifePodWin(FloatLayout):
         self._keypress(obj.name)
         if obj.active:
             self.app.root.reset_display()
-            if self.app.game._game_complete():
-                print('game complete')
-                self.app.show_info("Game complete!")
-            elif self.app.game._round_complete():
-                self.app.game.current_round += 1
 
+            # Evaluate player choice.
             self.app.game.player_name = obj.name
             if obj.name == 'none':
                 self.app.game.current_player = None
             elif obj.name not in [p.name for p in self.app.game.players]:
                 # Non-player was removed and can't play.
                 self.app.game.current_player = None
-                self.app.show_error(f"Player \"{obj.name}\" is not playing.")
+                self.app.show_error(f"({obj.name} not playing)")
             else:
+                # Load player.
                 self.app.game.current_player = self.app.game._get_player(obj.name, self.app.game.players)
                 self.app.show_assets(self.app.game.current_player)
     
@@ -179,7 +189,8 @@ class LifePodApp(App):
     def set_game_length(self):
         self.game.length = int(self.pending_input)
         # self.root.ids.remaining_rounds.text = str(self.game.length - self.game.current_round + 1)
-        self.update_remaining_rounds(self.game.length - self.game.current_round + 1)
+        # self.update_remaining_rounds(self.game.length - self.game.current_round + 1)
+        self.game.start_next_round()
 
     def update_remaining_rounds(self, value):
         # current_round = int(self.root.ids.remaining_rounds.text)
@@ -252,6 +263,21 @@ class NumButton(AppButton):
     def _get_pos_hint(self):
         # Sets instance attribute here, and is used to set value in KV file.
         dx, dy = self._offsets(int(self.text))
+        return {'center_x': 0.5 + dx, 'center_y': 0.5 + dy}
+
+    def _offsets(self, idx):
+        rads = math.radians(360*(1 - idx) / 11)
+        dx = -0.4 * math.sin(rads)
+        dy = 0.4 * math.cos(rads)
+        return (dx, dy)
+
+class NumLayout(BoxLayout):
+    number = NumericProperty(None)
+    text = StringProperty(None)
+
+    def _get_pos_hint(self):
+        # Sets instance attribute here, and is used to set value in KV file.
+        dx, dy = self._offsets(self.number)
         return {'center_x': 0.5 + dx, 'center_y': 0.5 + dy}
 
     def _offsets(self, idx):

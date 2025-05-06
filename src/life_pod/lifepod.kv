@@ -93,37 +93,72 @@
         PlusButton:
 
     # Number buttons
-    NumButton:
-        text: "0"
+    NumLayout:
+        number: 0
+        text: "SALARY"
         pos_hint: self._get_pos_hint()
+        NumButtonInset:
+            text: str(self.parent.number)
+        AppLabel:
+            text: self.parent.text
 
-    NumButton:
-        text: "1"
+    NumLayout:
+        number: 1
+        text: "LOTTERY"
         pos_hint: self._get_pos_hint()
+        NumButtonInset:
+            text: str(self.parent.number)
+        AppLabel:
+            text: self.parent.text
 
-    NumButton:
-        text: "2"
+    NumLayout:
+        number: 2
+        text: "CHANCE"
         pos_hint: self._get_pos_hint()
+        NumButtonInset:
+            text: str(self.parent.number)
+        AppLabel:
+            text: self.parent.text
 
-    NumButton:
-        text: "3"
+    NumLayout:
+        number: 3
+        text: "MARRIAGE"
         pos_hint: self._get_pos_hint()
+        NumButtonInset:
+            text: str(self.parent.number)
+        AppLabel:
+            text: self.parent.text
 
     NumButton:
         text: "4"
         pos_hint: self._get_pos_hint()
 
-    NumButton:
-        text: "5"
+    NumLayout:
+        number: 5
+        text: "HOUSE"
         pos_hint: self._get_pos_hint()
+        NumButtonInset:
+            text: str(self.parent.number)
+        AppLabel:
+            text: self.parent.text
 
-    NumButton:
-        text: "6"
+    NumLayout:
+        number: 6
+        text: "CAR"
         pos_hint: self._get_pos_hint()
+        NumButtonInset:
+            text: str(self.parent.number)
+        AppLabel:
+            text: self.parent.text
 
-    NumButton:
-        text: "7"
+    NumLayout:
+        number: 7
+        text: "BABY"
         pos_hint: self._get_pos_hint()
+        NumButtonInset:
+            text: str(self.parent.number)
+        AppLabel:
+            text: self.parent.text
 
     NumButton:
         text: "8"
@@ -131,11 +166,16 @@
 
     NumButton:
         text: "9"
-        pos_hint: self._get_pos_hint()
+        pos_hint: self._get_pos_hint() 
 
-    NumButton:
-        text: "10"
+    NumLayout:
+        number: 10
+        text: "YEARS"
         pos_hint: self._get_pos_hint()
+        NumButtonInset:
+            text: str(self.parent.number)
+        AppLabel:
+            text: self.parent.text
 
 
 <BlueBoxLayout@BoxLayout>:
@@ -162,9 +202,16 @@
             size: self.size
 
 
+<AppLabel@Label>:
+    color: (0, 0, 0, 1)
+    font_size: 12
+    bold: True
+    halign: 'left'
+
 <ScreenLabel@Label>:
     halign: 'right'
     color: (0, 0, 0, 1)
+    font_size: 24
 
 
 <BlueButton>:
@@ -219,7 +266,14 @@
     color: (0, 0, 0, 1)
     bold: True
     size_hint: (0.05, 0.05)
-    on_press: app.root.handle_num_input(self.text)
+    on_press: app.root.handle_num_input(self)
+
+<NumButtonInset@NumButton>:
+    size_hint: (1, 0.80)
+
+<NumLayout>:
+    orientation: 'vertical'
+    size_hint: (0.05, 0.10)
 
 
 <PlayerChooser@BoxLayout>
@@ -227,11 +281,8 @@
     pos_hint: {'right': 0.95, 'top': 1}
     orientation: 'vertical'
     spacing: 5
-    Label:
-        #size_hint: (None, 0.30)
-        color: (0, 0, 0, 1)
+    AppLabel:
         font_size: 20
-        halign: 'left'
         text: 'Player'
     PlayerChoiceNone:
     PlayerChoiceRed:

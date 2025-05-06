@@ -55,17 +55,15 @@ class Player:
 
     def do_turn(self):
         print(f"{self.game.current_round=}; player: {self}; {self.turns_taken=}")
+        if self.game.current_round > self.game.length:
+            # Game over; show assets.
+            self.game.show_assets(self)
+            return
+
         if self.turns_taken == self.game.current_round:
-            if self.game.current_round == 1:
-                self.game._remove_nonplayers()
-
-            if self.game.round_is_complete():
-                self.game.start_next_round()
-            else:
-                # Player already played.
-                self.game.show_error(f"{self} already played turn {self.game.current_round}")
-                return
-
+            # Player already played.
+            self.game.show_error(f"{self} already played")
+            return
 
         self.update_dollars()
         self.update_life_points()

@@ -19,7 +19,7 @@ class Game:
         self._ask_length_text = "How many turns?"
         self._ask_length_help = "Please enter a whole number from 1-20."
         self.current_player = None
-        self.current_round = 1
+        self.current_round = 0
 
         self.all_colors = ['red', 'yellow', 'green', 'blue']
 
@@ -260,7 +260,7 @@ class Gui(Game):
         self.app.ask_length(self._ask_length_text)
 
     def round_is_complete(self):
-        """This is evaluated right after any player taps "Spin"."""
+        """This is evaluated right after any player is selected."""
         # All players have taken as many turns as rounds that have been played.
         return all([p.turns_taken == self.current_round for p in self.players])
 
