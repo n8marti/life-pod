@@ -2,7 +2,7 @@ from random import randint
 
 
 class Player:
-    def __init__(self, game, color):
+    def __init__(self, game, name):
         self.game = game
         self.actions = {
             'roll':  self.do_turn,
@@ -10,7 +10,8 @@ class Player:
             'update-life-points': self.update_life_points,
             'done': self._end,
         }
-        self.color = color
+        # self.update_operator = None  # +/-
+        self.name = name
         self.salary = 5000
 
         self.dollars = 0
@@ -34,13 +35,12 @@ class Player:
 
     def get_assets(self):
         return {
+            'cars': self.cars,
+            'houses': self.houses,
+            'children': self.children,
+            'married': self.married,
             'dollars': self.dollars,
             'life points': self.life_points,
-            'married': self.married,
-            'children': self.children,
-            'houses': self.houses,
-            'cars': self.cars,
-            'degrees': self.degrees,
         }
 
     def play_loop(self):
@@ -51,22 +51,31 @@ class Player:
             func()
 
     def __str__(self):
-        return self.color
+        return self.name
 
     def do_turn(self):
+        print(f"{self.game.current_round=}; player: {self}; {self.turns_taken=}")
         if self.turns_taken == self.game.current_round:
-            self.game.show_info(f"{str(self)} already played this round.")
-            return
+            if self.game.current_round == 1:
+                self.game._remove_nonplayers()
 
-        self.update_dollars(auto=True)
-        self.update_life_points(auto=True)
+            if self.game.round_is_complete():
+                self.game.start_next_round()
+            else:
+                # Player already played.
+                self.game.show_error(f"{self} already played turn {self.game.current_round}")
+                return
+
+
+        self.update_dollars()
+        self.update_life_points()
         
         roll_result = self._roll()
         self.turns_taken += 1
         self.earn_salary()
         self.game.show_assets(self)
 
-        self.game.show_info(f"You rolled '{roll_result}'")
+        self.game.show_info(f"You rolled \"{roll_result}\"")
 
     def _is_in_game(self, game) -> bool:
         return str(self) in [str(p) for p in game.players]
@@ -79,18 +88,19 @@ class Player:
         min = 1
         return randint(min, 10)
 
-    def update_dollars(self, auto=False):
-        if auto is False:
-            value = int(self.game._ask_value("+ or - how many dollars?"))
+    def update_dollars(self, value=None):
+        if value:
+            # value = int(self.game._ask_value("+ or - how many dollars?"))
+            
             self.dollars += value
             self.game.show_assets(self)
         else:
             # if houses, cars, family, etc.; apply "interest" income or losses
             pass
 
-    def update_life_points(self, auto=False):
-        if auto is False:
-            value = int(self.game._ask_value("+ or - how many life points?"))
+    def update_life_points(self, value=None):
+        if value:
+            # value = int(self.game._ask_value("+ or - how many life points?"))
             self.life_points += value
             self.game.show_assets(self)
         else:

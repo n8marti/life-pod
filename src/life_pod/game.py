@@ -6,7 +6,7 @@ from .gui import LifePodApp
 from .tkgui import LengthWindow
 from .tkgui import MainWindow
 from .tkgui import PickPlayerWindow
-from .tkgui import PlayerWindow
+# from .tkgui import PlayerWindow
 from .player import Player
 from .player import PlayerInvalidError
 from .player import PlayerTakenError
@@ -218,7 +218,8 @@ class TkGui(Game):
         return self._ask_yes_no(self._ask_player_changes_text)
 
     def show_assets(self, player):
-        p = PlayerWindow(str(player))
+        pass
+        # p = PlayerWindow(str(player))
         # p.win.wait_window()
 
     def show_error(self, text):
@@ -258,14 +259,31 @@ class Gui(Game):
         # self.app.root_window.children[0]._ask_length(self._ask_length_text)
         self.app.ask_length(self._ask_length_text)
 
+    def round_is_complete(self):
+        """This is evaluated right after any player taps "Spin"."""
+        # All players have taken as many turns as rounds that have been played.
+        return all([p.turns_taken == self.current_round for p in self.players])
+
     def show_assets(self, player):
         self.app.show_assets(player)
+
+    def show_error(self, text):
+        self.app.show_error(text)
+
+    def show_info(self, text):
+        self.app.show_info(text)
+
+    def start_next_round(self):
+        self.current_round += 1
+        self.app.update_remaining_rounds(self._get_remaining_rounds())
 
     def _add_player(self, color):
         self.players.append(Player(self, color))
 
-    def _remove_player(self, name):
-        if self.players:
-            for p in self.players[:]:
-                if p.name == name:
-                    self.players.remove(p)
+    def _get_remaining_rounds(self):
+        return self.length - self.current_round + 1
+
+    def _remove_nonplayers(self):
+        for p in self.players[:]:
+            if p.turns_taken == 0:
+                self.players.remove(p)
