@@ -8,8 +8,8 @@
    version="1.1"
    id="svg1"
    inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
-   sodipodi:docname="blank2.svg"
-   inkscape:export-filename="blank2.png"
+   sodipodi:docname="house-blank.svg"
+   inkscape:export-filename="house-blank.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -47,5 +47,14 @@
   <g
      inkscape:label="Calque 1"
      inkscape:groupmode="layer"
-     id="layer1" />
+     id="layer1">
+    <text
+       xml:space="preserve"
+       id="text1"
+       style="font-size:101.333px;font-family:Andika;-inkscape-font-specification:'Andika, Normal';text-align:start;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect1);display:inline;fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:10;stroke-linecap:round;stroke-linejoin:round"
+       transform="translate(79.680724,16.774889)"><tspan
+         x="150.27539"
+         y="262.07467"
+         id="tspan2">x</tspan></text>
+  </g>
 </svg>

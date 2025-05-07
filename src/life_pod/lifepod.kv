@@ -27,7 +27,7 @@
             # display screen
             ScreenBoxLayout:
                 orientation: 'vertical'
-                ScreenBoxLayout:  # used to display physical assets
+                ScreenBoxLayout:  # 1st row of display screen
                     size_hint_y: 1/5
                     ScreenImage:
                         id: house_modest
@@ -44,46 +44,51 @@
                     ScreenImage:
                         id: car_economy
                         size_hint_x: 1/6
-                        source: "img/car-economy.png"
+                        source: "img/blank.png"
                     ScreenImage:
                         id: car_sports
                         size_hint_x: 1/6
-                        source: "img/car-sports.png"
+                        source: "img/blank.png"
                     ScreenImage:  # baby image
+                        id: babies
                         size_hint_x: 1/12
-                        source: "img/babies.png"
+                        source: "img/blank.png"
                     ScreenLabel:
                         id: baby_count
                         size_hint_x: 1/12
-                        text: "0"
-                ScreenBoxLayout:
+                ScreenBoxLayout: # 2nd row of display screen
                     size_hint_y: 2/5
-                    ScreenLabel:
-                        size_hint_x: 1/10
-                        text: "$"
+                    ScreenImage:
+                        size_hint_x: 1/8
+                        id: dollar
+                        source: 'img/blank.png'
                     ScreenLabel:  # used to display messages and dollars
-                        size_hint_x: 8/10
+                        size_hint_x: 6/8
                         id: display1
                     ScreenBoxLayout:
-                        size_hint_x: 1/10
+                        size_hint_x: 1/8
                         orientation: 'vertical'
                         ScreenImage:  # wedding ring
-                            source: "img/married.png"
+                            id: married
+                            source: "img/blank.png"
                         ScreenLabel:  # +/-
                             id: sign
-                ScreenBoxLayout:
+                ScreenBoxLayout: # 3rd row of display screen
                     size_hint_y: 2/5
+                    spacing: 10
                     ScreenImage:  # heart
+                        id: heart
                         source: "img/blank.png"
-                        size_hint_x: 1/10
+                        size_hint_x: 1/8
                     ScreenLabel:  # used to echo user input
                         id: display2
-                        size_hint_x: 8/10
+                        size_hint_x: 6/8
                     ScreenBoxLayout:
-                        size_hint_x: 1/10
+                        size_hint_x: 1/8
                         orientation: 'vertical'
                         ScreenImage: # clock
-                            source: "img/clock.png"
+                            id: turns
+                            source: "img/blank.png"
                         ScreenLabel:
                             id: remaining_rounds
 
@@ -204,21 +209,29 @@
 
 <AppLabel@Label>:
     color: (0, 0, 0, 1)
-    font_size: 12
+    font_size: 11
     bold: True
-    halign: 'left'
+    #text_size: self.size
+    #halign: 'left'
 
 <ScreenLabel@Label>:
     halign: 'right'
+    valign: 'middle'
     color: (0, 0, 0, 1)
-    font_size: 24
+    #bold: True
+    font_name: 'RobotoMono-Regular'
+    font_size: 30
+    text_size: (self.width, None)
+    shorten: True
 
 
 <BlueButton>:
     background_normal: ''
     background_color: (0.2, 0.75, 1, 1)
     color: (0, 0, 0, 1)
+    font_size: 20
     bold: True
+
 
 <EnterButton@BlueButton>:
     text: "Enter"

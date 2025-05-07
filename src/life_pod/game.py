@@ -16,7 +16,7 @@ from .round import Round
 class Game:
     def __init__(self):
         self.length = None
-        self._ask_length_text = "How many turns?"
+        self._ask_length_text = "# of turns:"
         self._ask_length_help = "Please enter a whole number from 1-20."
         self.current_player = None
         self.current_round = 0
@@ -28,6 +28,7 @@ class Game:
         self._ask_which_players_help = f'Valid colors are {', '.join(self.all_colors)}.'
         self._ask_player_text = "Choose player color"
         self._ask_player_help = "Please choose an acceptable color."
+        self._ask_update_salary = "New salary:"
 
         self._ask_start_turn_text = "Start your turn?"
         self._ask_player_changes_text = "Update player details?"
@@ -270,8 +271,12 @@ class Gui(Game):
     def show_error(self, text):
         self.app.show_error(text)
 
-    def show_info(self, text):
-        self.app.show_info(text)
+    def show_game_over(self):
+        self.conversion_factor = randint(80, 120)
+        self.app.show_game_over()
+
+    def show_info(self, *args, **kwargs):
+        self.app.show_info(*args, **kwargs)
 
     def start_next_round(self):
         self.current_round += 1

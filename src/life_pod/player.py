@@ -27,6 +27,9 @@ class Player:
 
         self.turns_taken = 0
 
+    def convert_assets(self, factor):
+        self._convert_dollars(factor)
+
     def earn_salary(self):
         self.dollars += self.salary
 
@@ -57,7 +60,7 @@ class Player:
         print(f"{self.game.current_round=}; player: {self}; {self.turns_taken=}")
         if self.game.current_round > self.game.length:
             # Game over; show assets.
-            self.game.show_assets(self)
+            self.game.show_game_over()
             return
 
         if self.turns_taken == self.game.current_round:
@@ -73,18 +76,7 @@ class Player:
         self.earn_salary()
         self.game.show_assets(self)
 
-        self.game.show_info(f"You rolled \"{roll_result}\"")
-
-    def _is_in_game(self, game) -> bool:
-        return str(self) in [str(p) for p in game.players]
-
-    def _end(self):
-        self.__end = True
-
-    def _roll(self):
-        # TODO: Change 'min' depending on car ownership.
-        min = 1
-        return randint(min, 10)
+        self.game.show_info(str(roll_result), clear=True)
 
     def update_dollars(self, value=None):
         if value:
@@ -104,6 +96,22 @@ class Player:
         else:
             # if houses, cars, family, etc.; apply "interest" income or losses
             pass
+
+    def _convert_dollars(self, factor):
+        extra_life_points = int(round(self.dollars / factor, 0))
+        self.dollars = 0
+        self.update_life_points(extra_life_points)
+
+    def _is_in_game(self, game) -> bool:
+        return str(self) in [str(p) for p in game.players]
+
+    def _end(self):
+        self.__end = True
+
+    def _roll(self):
+        # TODO: Change 'min' depending on car ownership.
+        min = 1
+        return randint(min, 10)
 
 
 class PlayerInvalidError(ValueError):
