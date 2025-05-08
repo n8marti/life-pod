@@ -28,15 +28,15 @@ class Player:
     def buy(self, name):
         print(f"buying: {name}")
         match name:
-            case 'economy-car':
+            case a.Car.ECONOMY:
                 asset = a.EconomyCar()
-            case 'sports-car':
+            case a.Car.SPORTS:
                 asset = a.SportsCar()
-            case 'modest-house':
+            case a.House.MODEST:
                 asset = a.ModestHouse()
-            case 'midsized-house':
+            case a.House.MIDSIZED:
                 asset = a.MidSizedHouse()
-            case 'mansion-house':
+            case a.House.MANSION:
                 asset = a.Mansion()
         self.dollars -= asset.value
         self.assets.append(asset)
@@ -129,13 +129,7 @@ class Player:
         return [asset for asset in self.assets if 'car' in asset.name]
 
     def _get_houses(self):
-        houses = []
-        for asset in self.assets:
-            if 'house' in asset.name:
-                houses.append(asset)
-            elif 'mansion' in asset.name:
-                houses.append(asset)
-        return houses
+        return [asset for asset in self.assets if 'house' in asset.name]
 
     def _is_in_game(self, game) -> bool:
         return str(self) in [str(p) for p in game.players]

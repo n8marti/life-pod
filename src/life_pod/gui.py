@@ -13,6 +13,9 @@ from kivy.uix.floatlayout import FloatLayout  # noqa: E402
 from kivy.uix.image import Image  # noqa: E402
 from kivy.uix.label import Label  # noqa: E402
 
+from .assets import Car  # noqa: E402
+from .assets import House  # noqa: E402
+
 
 class LifePodWin(FloatLayout):
     def __init__(self, **kwargs):
@@ -156,11 +159,11 @@ class LifePodWin(FloatLayout):
         # Use "CAR" to cycle through car options.
         if self.prev_choice is self.ids.car_economy:
             self.ids.car_sports.show()
-            self.app.pending_choice = 'sports-car'
+            self.app.pending_choice = Car.SPORTS
             self.prev_choice = self.ids.car_sports
         else:
             self.ids.car_economy.show()
-            self.app.pending_choice = 'economy-car'
+            self.app.pending_choice = Car.ECONOMY
             self.prev_choice = self.ids.car_economy
 
     def _choose_house(self):
@@ -171,15 +174,15 @@ class LifePodWin(FloatLayout):
         # Use "HOUSE" to cycle through car options.
         if self.prev_choice is self.ids.house_modest:
             self.ids.house_midsized.show()
-            self.app.pending_choice = 'midsized-house'
+            self.app.pending_choice = House.MIDSIZED
             self.prev_choice = self.ids.house_midsized
         elif self.prev_choice is self.ids.house_midsized:
             self.ids.house_mansion.show()
-            self.app.pending_choice = 'mansion-house'
+            self.app.pending_choice = House.MANSION
             self.prev_choice = self.ids.house_mansion
         else:
             self.ids.house_modest.show()
-            self.app.pending_choice = 'modest-house'
+            self.app.pending_choice = House.MODEST
             self.prev_choice = self.ids.house_modest
 
     def _choose_marriage(self):
@@ -214,9 +217,9 @@ class LifePodWin(FloatLayout):
             cars = [c.name for c in self.app.game.current_player.cars]
         for car in cars:
             match car:
-                case 'economy-car':
+                case Car.ECONOMY:
                     self.ids.car_economy.show()
-                case 'sports-car':
+                case Car.SPORTS:
                     self.ids.car_sports.show()
     
     def _show_sign(self, value):
@@ -311,16 +314,15 @@ class LifePodApp(App):
 
 
     def show_assets(self):
-        player = self.game.current_player
         self.root._show_turns()
-        for k, v in player.get_assets().items():
+        for k, v in self.game.current_player.get_assets().items():
             match k:
                 case 'cars':
-                    self._show_cars(v)
+                    self._show_assets(v)
                 case 'babies':
                     self._show_babies(v)
                 case 'houses':
-                    self._show_houses(v)
+                    self._show_assets(v)
                 case 'married':
                     self._show_married(v)
                 case 'dollars':
@@ -408,18 +410,27 @@ class LifePodApp(App):
     def _set_sign(self, value):
         self.pending_sign = value
 
-    def _show_cars(self, value):
-        pass
+    def _show_assets(self, iterable):
+        for asset in iterable:
+            match asset.name:
+                case Car.ECONOMY:
+                    self.root.ids.car_economy.show()
+                case Car.SPORTS:
+                    self.root.ids.car_sports.show()
+                case House.MODEST:
+                    self.root.ids.house_modest.show()
+                case House.MIDSIZED:
+                    self.root.ids.house_midsized.show()
+                case House.MANSION:
+                    self.root.ids.house_mansion.show()
 
     def _show_babies(self, value):
         self.root.ids.babies.show()
         self.root.ids.baby_count.text = str(value)
 
-    def _show_houses(self, value):
-        pass
-
     def _show_married(self, value):
-        pass
+        if value is True:
+            self.root.ids.married.show()
 
     def _show_dollars(self, value):
         self.root.ids.dollar.show()
