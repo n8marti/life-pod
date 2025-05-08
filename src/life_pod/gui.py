@@ -134,6 +134,20 @@ class LifePodWin(FloatLayout):
     def show_game_over(self):
         self.set_display1_text("game over")
 
+    def _choose_baby(self):
+        self.clear_display()
+        if self.app.pending_action is None:
+            self.app.pending_action = self.app.update_player_babies
+            self.app._wait_choice()
+        if self.prev_choice is True:
+            self.ids.babies.hide()
+            self.app.pending_choice = False
+            self.prev_choice = False
+        else:
+            self.ids.babies.show()
+            self.app.pending_choice = True
+            self.prev_choice = True
+
     def _choose_car(self):
         self.clear_display()
         if self.app.pending_action is None:
@@ -167,6 +181,20 @@ class LifePodWin(FloatLayout):
             self.ids.house_modest.show()
             self.app.pending_choice = 'modest-house'
             self.prev_choice = self.ids.house_modest
+
+    def _choose_marriage(self):
+        self.clear_display()
+        if self.app.pending_action is None:
+            self.app.pending_action = self.app.update_player_marriage
+            self.app._wait_choice()
+        if self.prev_choice is True:
+            self.ids.married.hide()
+            self.app.pending_choice = False
+            self.prev_choice = False
+        else:
+            self.ids.married.show()
+            self.app.pending_choice = True
+            self.prev_choice = True
 
     def _hide_houses(self):
         self.ids.house_modest.hide()
@@ -226,9 +254,9 @@ class LifePodWin(FloatLayout):
             case 'chance':
                 pass
             case 'marriage':
-                pass
+                self._choose_marriage()
             case 'baby':
-                pass
+                self._choose_baby()
             case 'car':
                 self._choose_car()
             case 'house':
@@ -273,7 +301,7 @@ class LifePodApp(App):
             self.reset_pending()
             return False
 
-        if self.pending_choice and not self.active_choice:
+        if self.pending_choice is not None and not self.active_choice:
             print(f"received choice: {self.pending_choice}; running: {self.pending_action.__name__}")
             # NOTE: pending_action must rely on reading self.pending_input or
             # self.pending_choice.
@@ -289,8 +317,8 @@ class LifePodApp(App):
             match k:
                 case 'cars':
                     self._show_cars(v)
-                case 'children':
-                    self._show_children(v)
+                case 'babies':
+                    self._show_babies(v)
                 case 'houses':
                     self._show_houses(v)
                 case 'married':
@@ -319,6 +347,13 @@ class LifePodApp(App):
         self.pending_sign = None
         self.pending_action = None
 
+    def update_player_babies(self):
+        if self._verify_player():
+            if self.pending_choice is True:
+                self.game.current_player.add_baby(self.pending_choice)
+            self.reset_pending()
+            self.show_assets()
+
     def update_player_dollars(self):
         if self._verify_player():
             self.game.current_player.update_dollars(int(self.pending_input))
@@ -327,6 +362,12 @@ class LifePodApp(App):
     def update_player_life_points(self):
         if self._verify_player():
             self.game.current_player.update_life_points(int(self.pending_input))
+            self.show_assets()
+
+    def update_player_marriage(self):
+        if self._verify_player():
+            self.game.current_player.set_marriage(self.pending_choice)
+            self.reset_pending()
             self.show_assets()
 
     def ask_length(self, text):
@@ -371,7 +412,8 @@ class LifePodApp(App):
         pass
 
     def _show_babies(self, value):
-        pass
+        self.root.ids.babies.show()
+        self.root.ids.baby_count.text = str(value)
 
     def _show_houses(self, value):
         pass

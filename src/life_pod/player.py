@@ -45,14 +45,27 @@ class Player:
         asset = self._retrieve_asset(name)
         self.dollars += asset.value
 
+    def set_marriage(self, value):
+        if value is True:
+            self.life_points += 3000
+        else:
+            self.life_points -= 3000
+        self.married = value
+
+    def add_baby(self, qty=1):
+        self.babies += qty
+        if self.babies > 9:
+            self.babies = 0
+
     def convert_assets(self, factor):
         self._convert_dollars(factor)
 
     def earn_salary(self):
-        if self.salary_reduction is not None:
-            salary = self.salary - self.salary_reduction
-        else:
-            salary = self.salary
+        salary_reduction = self.salary_reduction
+        if salary_reduction is None:
+            salary_reduction = 0
+        salary = min(self.salary - salary_reduction, 0)
+
         self.dollars += salary
 
     def set_salary(self, salary):
@@ -80,6 +93,8 @@ class Player:
 
     def do_turn(self):
         print(f"{self.game.current_round=}; player: {self}; {self.turns_taken=}")
+        self.salary_reduction = None
+
         if self.game.current_round > self.game.length:
             # Game over; show assets.
             self.game.show_game_over()
@@ -87,7 +102,7 @@ class Player:
 
         if self.turns_taken == self.game.current_round:
             # Player already played.
-            self.game.show_error(f"{self} already played")
+            self.game.show_error("next player")
             return
 
         self._update_from_assets()
@@ -142,7 +157,7 @@ class Player:
         elif len(self._get_cars()) == 1:
             min += self._get_cars()[0].roll_modifier
         return randint(min, 10)
-    
+
     def _update_from_assets(self):
         if self.dollars < 0:
             # Pay 10% interest on debt.
@@ -154,20 +169,23 @@ class Player:
 
             # Account for any salary reduction.
             if hasattr(asset, 'salary_reduction'):
-                if self.salary_reduction is None:
-                    self.salary_reduction = 0
-                self.salary_reduction += int(round(self.salary * asset.salary_reduction))
+                self._update_salary_reduction(self.salary * asset.salary_reduction)
 
             # Account for any additional life points.
             if hasattr(asset, 'life_points_modifier'):
                 self.life_points += asset.life_points_modifier
 
         if self.married:
-            raise NotImplementedError
+            self.life_points += 1500
         
         if self.babies > 0:
-            raise NotImplementedError
+            multiplier = max(self.babies, 4)
+            self._update_salary_reduction(self.salary * 0.1 * multiplier)
 
+    def _update_salary_reduction(self, value):
+        if self.salary_reduction is None:
+            self.salary_reduction = 0
+        self.salary_reduction += int(round(value, 0))
 
 class PlayerInvalidError(ValueError):
     pass
