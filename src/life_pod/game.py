@@ -210,7 +210,7 @@ class Gui(Game):
         # All players have taken as many turns as rounds that have been played.
         return all([p.turns_taken == self.current_round for p in self.players])
 
-    def show_assets(self):
+    def show_assets(self, *args):
         """Shows assets of current player."""
         self.app.show_assets()
 

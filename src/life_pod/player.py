@@ -64,8 +64,7 @@ class Player:
         salary_reduction = self.salary_reduction
         if salary_reduction is None:
             salary_reduction = 0
-        salary = min(self.salary - salary_reduction, 0)
-
+        salary = max(self.salary - salary_reduction, 0)
         self.dollars += salary
 
     def set_salary(self, salary):
@@ -96,7 +95,11 @@ class Player:
         self.salary_reduction = None
 
         if self.game.current_round > self.game.length:
-            # Game over; show assets.
+            # Game over, convert fixed assets to cash.
+            for asset in self.assets:
+                self.sell(asset.name)
+
+            # Show assets.
             self.game.show_game_over()
             return
 
@@ -113,6 +116,8 @@ class Player:
         self.game.show_assets()
 
         self.game.show_info(str(roll_result), clear=True)
+        # Show assets again after 3 seconds.
+        self.game.app._run_after(self.game.show_assets, 3)
 
     def update_dollars(self, value):
         self.dollars += value
