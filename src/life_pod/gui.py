@@ -3,18 +3,22 @@ import kivy
 kivy.require('2.0.0')
 from kivy.app import App  # noqa: E402
 from kivy.clock import Clock  # noqa: E402
+from kivy.properties import BooleanProperty  # noqa: E402
 from kivy.properties import NumericProperty  # noqa: E402
 from kivy.properties import StringProperty  # noqa: E402
 from kivy.uix.button import Button  # noqa: E402
 from kivy.uix.checkbox import CheckBox  # noqa: E402
 from kivy.uix.boxlayout import BoxLayout  # noqa: E402
 from kivy.uix.floatlayout import FloatLayout  # noqa: E402
+from kivy.uix.image import Image  # noqa: E402
+from kivy.uix.label import Label  # noqa: E402
 
 
 class LifePodWin(FloatLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.app = App.get_running_app()
+        self.prev_choice = None
 
     def handle_num_input(self, instance):
         """Add digit to pending user input."""
@@ -32,8 +36,12 @@ class LifePodWin(FloatLayout):
     def handle_enter(self):
         """Signal that user input has stopped; get current value(s) of user input."""
         self._keypress('enter')
-        self.app._stop_input()
-        self.app.pending_input = self._concat_input()
+        if self.app.active_input:
+            self.app._stop_input()
+            self.app.pending_input = self._concat_input()
+        elif self.app.pending_choice:
+            self.app.active_choice = False
+            self.prev_choice = None
         self.clear_display()
         
     def handle_spin(self):
@@ -52,6 +60,7 @@ class LifePodWin(FloatLayout):
 
     def handle_undo(self):
         """Remove last character from user input."""
+        # TODO: Also handle last non-input operation?
         self._keypress('undo')
         if len(self.ids.display2.text) > 0:
             self.ids.display2.text = self.ids.display2.text[:-1]
@@ -75,14 +84,14 @@ class LifePodWin(FloatLayout):
     def handle_dollars(self):
         """Set pending action to update dollars."""
         self._keypress('$')
-        self._show_dollar()
+        self.ids.dollar.show()
         self.app._wait_input()
         self.app.pending_action = self.app.update_player_dollars
     
     def handle_life_points(self):
         """Set pending action to update life points."""
         self._keypress('life points')
-        self._show_heart()
+        self.ids.heart.show()
         self.app._wait_input()
         self.app.pending_action = self.app.update_player_life_points
 
@@ -90,7 +99,7 @@ class LifePodWin(FloatLayout):
         """Set current player."""
         self._keypress(obj.name)
         if obj.active:
-            self.app.root.clear_display()
+            self.clear_display()
 
             # Evaluate player choice.
             self.app.game.player_name = obj.name
@@ -103,24 +112,21 @@ class LifePodWin(FloatLayout):
             else:
                 # Load player.
                 self.app.game.current_player = self.app.game._get_player(obj.name, self.app.game.players)
-                self.app.show_assets(self.app.game.current_player)
+                self.app.show_assets()
 
     def clear_display(self):
-        self._reset_houses()
-        self._reset_cars()
+        self._hide_houses()
+        self._hide_cars()
         self._reset_babies()
         
-        self._hide_dollar()
-        self.set_display1_text('')
-        self._reset_married()
-        self._reset_sign()
+        self.ids.dollar.hide()
+        self.ids.display1.clear()
+        self.ids.married.hide()
+        self.ids.sign.clear()
 
-        self._hide_heart()
-        self.reset_input_field()
+        self.ids.heart.hide()
+        self.ids.display2.clear()
         self._reset_turns()
-
-    def reset_input_field(self):
-        self.ids.display2.text = ''
 
     def set_display1_text(self, text):
         self.ids.display1.text = str(text).upper()
@@ -128,46 +134,72 @@ class LifePodWin(FloatLayout):
     def show_game_over(self):
         self.set_display1_text("game over")
 
-    def _hide_dollar(self):
-        self.ids.dollar.source= 'img/blank.png'
+    def _choose_car(self):
+        self.clear_display()
+        if self.app.pending_action is None:
+            self.app.pending_action = self.app.buy_sell_player_asset
+            self.app._wait_choice()
+        # Use "CAR" to cycle through car options.
+        if self.prev_choice is self.ids.car_economy:
+            self.ids.car_sports.show()
+            self.app.pending_choice = 'sports-car'
+            self.prev_choice = self.ids.car_sports
+        else:
+            self.ids.car_economy.show()
+            self.app.pending_choice = 'economy-car'
+            self.prev_choice = self.ids.car_economy
 
-    def _show_dollar(self):
-        self.ids.dollar.source = 'img/dollar.png'
+    def _choose_house(self):
+        self.clear_display()
+        if self.app.pending_action is None:
+            self.app.pending_action = self.app.buy_sell_player_asset
+            self.app._wait_choice()
+        # Use "HOUSE" to cycle through car options.
+        if self.prev_choice is self.ids.house_modest:
+            self.ids.house_midsized.show()
+            self.app.pending_choice = 'midsized-house'
+            self.prev_choice = self.ids.house_midsized
+        elif self.prev_choice is self.ids.house_midsized:
+            self.ids.house_mansion.show()
+            self.app.pending_choice = 'mansion-house'
+            self.prev_choice = self.ids.house_mansion
+        else:
+            self.ids.house_modest.show()
+            self.app.pending_choice = 'modest-house'
+            self.prev_choice = self.ids.house_modest
 
-    def _hide_heart(self):
-        self.ids.heart.source = 'img/blank.png'
-
-    def _show_heart(self):
-        self.ids.heart.source = 'img/heart.png'
-
-    def _reset_houses(self):
-        self.ids.house_modest.source = 'img/blank.png'
-        self.ids.house_midsized.source = 'img/blank.png'
-        self.ids.house_mansion.source = 'img/blank.png'
+    def _hide_houses(self):
+        self.ids.house_modest.hide()
+        self.ids.house_midsized.hide()
+        self.ids.house_mansion.hide()
     
-    def _reset_cars(self):
-        self.ids.car_economy.source = 'img/blank.png'
-        self.ids.car_sports.source = 'img/blank.png'
+    def _hide_cars(self):
+        self.ids.car_economy.hide()
+        self.ids.car_sports.hide()
     
     def _reset_babies(self):
-        self.ids.babies.source = 'img/blank.png'
-        self.ids.baby_count.text = ""
+        self.ids.babies.hide()
+        self.ids.baby_count.clear()
 
-    def _reset_married(self):
-        self.ids.married.source = 'img/blank.png'
-
-    def _reset_sign(self):
-        self.ids.sign.text = ''
+    def _show_cars(self, cars=None):
+        if cars is None:
+            cars = [c.name for c in self.app.game.current_player.cars]
+        for car in cars:
+            match car:
+                case 'economy-car':
+                    self.ids.car_economy.show()
+                case 'sports-car':
+                    self.ids.car_sports.show()
     
     def _show_sign(self, value):
         self.ids.sign.text = str(value)
 
     def _reset_turns(self):
-        self.ids.turns.source = 'img/blank.png'
-        self.ids.remaining_rounds.text = ""
+        self.ids.turns.hide()
+        self.ids.remaining_rounds.clear()
 
     def _show_turns(self, value=None):
-        self.ids.turns.source = 'img/clock.png'
+        self.ids.turns.show()
         if value is None:
             value = self.app.game._get_remaining_rounds()
         self.ids.remaining_rounds.text = str(value)
@@ -198,9 +230,9 @@ class LifePodWin(FloatLayout):
             case 'baby':
                 pass
             case 'car':
-                pass
+                self._choose_car()
             case 'house':
-                pass
+                self._choose_house()
 
 
 class LifePodApp(App):
@@ -208,7 +240,9 @@ class LifePodApp(App):
         super().__init__(**kwargs)
         self.game = game
 
+        self.active_choice = False
         self.active_input = False
+        self.pending_choice = None
         self.pending_input = None
         self.pending_sign = None
         self.pending_action = None
@@ -216,18 +250,40 @@ class LifePodApp(App):
     def build(self):
         return LifePodWin()
 
+    def buy_sell_player_asset(self):
+        asset_name = self.pending_choice
+        if asset_name in [a.name for a in self.game.current_player.assets]:
+            # Sell asset.
+            self.game.current_player.sell(asset_name)
+        else:
+            # Buy asset.
+            self.game.current_player.buy(asset_name)
+        self.show_assets()
+
     def on_start(self):
         self.root.clear_display()
         self.game.ask_length()
 
     def process_input(self, dt):
-        if not self.active_input:
-            print(f"input received; running: {self.pending_action.__name__}")
+        if self.pending_input and not self.active_input:
+            print(f"received input: {self.pending_input}; running: {self.pending_action.__name__}")
+            # NOTE: pending_action must rely on reading self.pending_input or
+            # self.pending_choice.
             self.pending_action()
             self.reset_pending()
             return False
 
-    def show_assets(self, player):
+        if self.pending_choice and not self.active_choice:
+            print(f"received choice: {self.pending_choice}; running: {self.pending_action.__name__}")
+            # NOTE: pending_action must rely on reading self.pending_input or
+            # self.pending_choice.
+            self.pending_action()
+            self.reset_pending()
+            return False
+
+
+    def show_assets(self):
+        player = self.game.current_player
         self.root._show_turns()
         for k, v in player.get_assets().items():
             match k:
@@ -258,6 +314,7 @@ class LifePodApp(App):
         self.root.set_display1_text(text)
 
     def reset_pending(self):
+        self.pending_choice = None
         self.pending_input = None
         self.pending_sign = None
         self.pending_action = None
@@ -265,11 +322,12 @@ class LifePodApp(App):
     def update_player_dollars(self):
         if self._verify_player():
             self.game.current_player.update_dollars(int(self.pending_input))
-            self.show_assets(self.game.current_player)
+            self.show_assets()
 
     def update_player_life_points(self):
         if self._verify_player():
             self.game.current_player.update_life_points(int(self.pending_input))
+            self.show_assets()
 
     def ask_length(self, text):
         self.show_info(text, clear=True)
@@ -289,18 +347,21 @@ class LifePodApp(App):
     def set_player_salary(self):
         if self._verify_player():
             self.game.current_player.set_salary(int(self.pending_input))
-            self.show_assets(self.game.current_player)
+            self.show_assets()
 
     def update_remaining_rounds(self, value):
         self.root._show_turns(value)
 
+    def _clear_input_field(self):
+        self.root.ids.display2.clear()
+
     def _convert_assets(self, dt):
         for p in self.game.players:
             p.convert_assets(self.game.conversion_factor)
-        self.show_assets(self.game.current_player)
+        self.show_assets()
 
     def _run_after(self, func, delay):
-        # NOTE: func must accept 'dt' kwargs.
+        # NOTE: func must accept 'dt' arg.
         Clock.schedule_once(func, delay)
 
     def _set_sign(self, value):
@@ -309,7 +370,7 @@ class LifePodApp(App):
     def _show_cars(self, value):
         pass
 
-    def _show_children(self, value):
+    def _show_babies(self, value):
         pass
 
     def _show_houses(self, value):
@@ -319,17 +380,17 @@ class LifePodApp(App):
         pass
 
     def _show_dollars(self, value):
-        self.root._show_dollar()
+        self.root.ids.dollar.show()
         self.show_info(str(value))
 
     def _show_life_points(self, value):
-        self.root._show_heart()
+        self.root.ids.heart.show()
         self.root.ids.display2.text = str(value)
 
     def _start_input(self):
         self.active_input = True
         self.user_input = ''
-        self.root.reset_input_field()
+        self._clear_input_field()
 
     def _stop_input(self):
         self.active_input = False
@@ -339,6 +400,11 @@ class LifePodApp(App):
             self.show_error("No player selected; try again.")
             return False
         return True
+
+    def _wait_choice(self):
+        print("waiting on user choice")
+        self.active_choice = True
+        Clock.schedule_interval(self.process_input, 0.1)
 
     def _wait_input(self):
         print("waiting on user input")
@@ -394,3 +460,22 @@ class NumLayout(BoxLayout):
         dx = -0.4 * math.sin(rads)
         dy = 0.4 * math.cos(rads)
         return (dx, dy)
+
+
+class ScreenImage(Image):
+    shown = BooleanProperty()
+    source_shown = StringProperty(None)
+    source_hidden = StringProperty('img/blank.png')
+
+    def hide(self):
+        self.shown = False
+        self.source = self.source_hidden
+
+    def show(self):
+        self.shown = True
+        self.source = self.source_shown
+
+
+class ScreenLabel(Label):
+    def clear(self):
+        self.text = ''

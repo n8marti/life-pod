@@ -1,12 +1,6 @@
 from random import randint
-from tkinter import messagebox
-from tkinter import Tk
 
 from .gui import LifePodApp
-from .tkgui import LengthWindow
-from .tkgui import MainWindow
-from .tkgui import PickPlayerWindow
-# from .tkgui import PlayerWindow
 from .player import Player
 from .player import PlayerInvalidError
 from .player import PlayerTakenError
@@ -51,7 +45,7 @@ class Game:
     def ask_update_player(self):
         raise NotImplementedError
 
-    def show_assets(self, player):
+    def show_assets(self):
         raise NotImplementedError
 
     def show_error(self, text):
@@ -186,60 +180,11 @@ class Cli(Game):
         else:
             return False
 
-    def show_assets(self, player):
+    def show_assets(self):
+        player = self.current_player
         for k, v in player.get_assets().items():
             print(f"\t{k}: {v}")
         print()
-
-
-class TkGui(Game):
-    def __init__(self):
-        super().__init__()
-        self.root = Tk()
-        self.win = MainWindow(self)
-        self.root.bind('<Visibility>', self._check_length)
-
-    def play(self):
-        self.root.mainloop()
-
-    def ask_length(self):
-        w = LengthWindow(self._ask_length_text)
-        w.win.wait_window()
-        return w.value
-
-    def ask_player(self):
-        w = PickPlayerWindow()
-        w.win.wait_window()
-        return w.value
-
-    def ask_start_turn(self):
-        return self._ask_yes_no(self._ask_start_turn_text)
-
-    def ask_update_player(self):
-        return self._ask_yes_no(self._ask_player_changes_text)
-
-    def show_assets(self, player):
-        pass
-        # p = PlayerWindow(str(player))
-        # p.win.wait_window()
-
-    def show_error(self, text):
-        messagebox.showerror("Error", text)
-
-    def show_info(self, text):
-        messagebox.showinfo("Info", text)
-    
-    def _ask_yes_no(self, text):
-        return messagebox.askyesno("Question", text)
-
-    def _check_length(self, evt):
-        self.root.unbind('<Visibility>')
-        if self.length is None:
-            self.length = self._ask_length()
-        
-        if self.current_round < self.length:
-            r = Round(self)
-            r.play_loop()
 
 
 class Gui(Game):
@@ -265,8 +210,9 @@ class Gui(Game):
         # All players have taken as many turns as rounds that have been played.
         return all([p.turns_taken == self.current_round for p in self.players])
 
-    def show_assets(self, player):
-        self.app.show_assets(player)
+    def show_assets(self):
+        """Shows assets of current player."""
+        self.app.show_assets()
 
     def show_error(self, text):
         self.app.show_error(text)
