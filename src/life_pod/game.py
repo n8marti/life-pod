@@ -19,7 +19,7 @@ class Game:
 
         self.players = None
         self._ask_which_players_text = "Which colors will be playing?"
-        self._ask_which_players_help = f'Valid colors are {', '.join(self.all_colors)}.'
+        self._ask_which_players_help = f"Valid colors are {', '.join(self.all_colors)}."
         self._ask_player_text = "Choose player color"
         self._ask_player_help = "Please choose an acceptable color."
         self._ask_update_salary = "New salary:"
