@@ -23,5 +23,5 @@ jobs:
       - name: upload artifacts to github
         uses: actions/upload-artifact@v2
         with:
-          name: life_pod
+          name: package
           path: ${{ steps.buildozer.outputs.filename }}
