@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout code
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
       
       - name: build with buildozer
         uses: ArtemSBulgakov/buildozer-action@v1
@@ -21,7 +21,7 @@ jobs:
           # buildozer_version: stable  # default
 
       - name: upload artifacts to github
-      - uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v2
         with:
           name: life_pod
           path: ${{ steps.buildozer.outputs.filename }}
