@@ -79,9 +79,10 @@ jobs:
       - name: Install pip dependencies
         run: |
           pip install --upgrade pip
-          pip install setuptools
-          # pip install .
-          pip install buildozer cython==0.29.33
+          pip install buildozer cython==0.29.33 setuptools
+
+      - name: Install app python package
+        run: pip install .
 
       # Build with Buildozer
       - name: Build with Buildozer
