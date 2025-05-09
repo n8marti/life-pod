@@ -8,179 +8,183 @@
             pos: self.pos
             size: self.size
 
-    PlayerChooser:
+    PlayerChooser: # radios with player list
+        size_hint: (1/4, 0.5)
+        pos_hint: {'center_x': 0.25, 'center_y': 0.5}
 
-    BoxLayout: # whole center area
-        spacing: 5
-        size_hint: 0.5, 0.5
-        pos_hint: {'center_x': .5, 'center_y': .5}
-        MinusButton:
-        BoxLayout: # blue buttons & screen frame
+    FloatLayout: # container for full "LIFE Pod"
+        size_hint_x: 3/4
+        BoxLayout: # center area with screen & buttons
             spacing: 5
-            size_hint: 0.6, 1.0
-            orientation: 'vertical'
-            BlueBoxLayout: # top 3 buttons
-                EnterButton:
-                SpinButton:
-                UndoButton:
-
-            # display screen
-            ScreenBoxLayout:
+            size_hint: 0.5, 0.5
+            pos_hint: {'center_x': .5, 'center_y': .5}
+            MinusButton:
+            BoxLayout: # blue buttons & screen frame
+                spacing: 5
+                size_hint: 0.6, 1.0
                 orientation: 'vertical'
-                ScreenBoxLayout:  # 1st row of display screen
-                    size_hint_y: 1/5
-                    ScreenImage:
-                        id: house_modest
-                        size_hint_x: 1/6
-                        source_shown: f"{root.img_dir}/house-modest.png"
-                    ScreenImage:
-                        id: house_midsized
-                        size_hint_x: 1/6
-                        source_shown: f"{root.img_dir}/house-midsized.png"
-                    ScreenImage:
-                        id: house_mansion
-                        size_hint_x: 1/6
-                        source_shown: f"{root.img_dir}/house-mansion.png"
-                    ScreenImage:
-                        id: car_economy
-                        size_hint_x: 1/6
-                        source_shown: f"{root.img_dir}/car-economy.png"
-                    ScreenImage:
-                        id: car_sports
-                        size_hint_x: 1/6
-                        source_shown: f"{root.img_dir}/car-sports.png"
-                    ScreenImage:  # baby image
-                        id: babies
-                        size_hint_x: 1/12
-                        source_shown: f"{root.img_dir}/babies.png"
-                    ScreenLabel:
-                        id: baby_count
-                        size_hint_x: 1/12
-                ScreenBoxLayout: # 2nd row of display screen
-                    size_hint_y: 2/5
-                    ScreenImage:
-                        size_hint_x: 1/8
-                        id: dollar
-                        source_shown: f"{root.img_dir}/dollar.png"
-                    ScreenLabel:  # used to display messages and dollars
-                        size_hint_x: 6/8
-                        id: display1
-                    ScreenBoxLayout:
-                        size_hint_x: 1/8
-                        orientation: 'vertical'
-                        ScreenImage:  # wedding ring
-                            id: married
-                            source_shown: f"{root.img_dir}/married.png"
-                        ScreenLabel:  # +/-
-                            id: sign
-                ScreenBoxLayout: # 3rd row of display screen
-                    size_hint_y: 2/5
-                    spacing: 10
-                    ScreenImage:  # heart
-                        size_hint_x: 1/8
-                        id: heart
-                        source_shown: f"{root.img_dir}/heart.png"
-                    ScreenLabel:  # used to echo user input
-                        size_hint_x: 6/8
-                        id: display2
-                    ScreenBoxLayout:
-                        size_hint_x: 1/8
-                        orientation: 'vertical'
-                        ScreenImage: # clock
-                            id: turns
-                            source_shown: f"{root.img_dir}/clock.png"
+                BlueBoxLayout: # top 3 buttons
+                    EnterButton:
+                    SpinButton:
+                    UndoButton:
+
+                # display screen
+                ScreenBoxLayout:
+                    orientation: 'vertical'
+                    ScreenBoxLayout:  # 1st row of display screen
+                        size_hint_y: 1/5
+                        ScreenImage:
+                            id: house_modest
+                            size_hint_x: 1/6
+                            source_shown: f"{root.img_dir}/house-modest.png"
+                        ScreenImage:
+                            id: house_midsized
+                            size_hint_x: 1/6
+                            source_shown: f"{root.img_dir}/house-midsized.png"
+                        ScreenImage:
+                            id: house_mansion
+                            size_hint_x: 1/6
+                            source_shown: f"{root.img_dir}/house-mansion.png"
+                        ScreenImage:
+                            id: car_economy
+                            size_hint_x: 1/6
+                            source_shown: f"{root.img_dir}/car-economy.png"
+                        ScreenImage:
+                            id: car_sports
+                            size_hint_x: 1/6
+                            source_shown: f"{root.img_dir}/car-sports.png"
+                        ScreenImage:  # baby image
+                            id: babies
+                            size_hint_x: 1/12
+                            source_shown: f"{root.img_dir}/babies.png"
                         ScreenLabel:
-                            id: remaining_rounds
+                            id: baby_count
+                            size_hint_x: 1/12
+                    ScreenBoxLayout: # 2nd row of display screen
+                        size_hint_y: 2/5
+                        ScreenImage:
+                            size_hint_x: 1/8
+                            id: dollar
+                            source_shown: f"{root.img_dir}/dollar.png"
+                        ScreenLabel:  # used to display messages and dollars
+                            size_hint_x: 6/8
+                            id: display1
+                        ScreenBoxLayout:
+                            size_hint_x: 1/8
+                            orientation: 'vertical'
+                            ScreenImage:  # wedding ring
+                                id: married
+                                source_shown: f"{root.img_dir}/married.png"
+                            ScreenLabel:  # +/-
+                                id: sign
+                    ScreenBoxLayout: # 3rd row of display screen
+                        size_hint_y: 2/5
+                        spacing: 10
+                        ScreenImage:  # heart
+                            size_hint_x: 1/8
+                            id: heart
+                            source_shown: f"{root.img_dir}/heart.png"
+                        ScreenLabel:  # used to echo user input
+                            size_hint_x: 6/8
+                            id: display2
+                        ScreenBoxLayout:
+                            size_hint_x: 1/8
+                            orientation: 'vertical'
+                            ScreenImage: # clock
+                                id: turns
+                                source_shown: f"{root.img_dir}/clock.png"
+                            ScreenLabel:
+                                id: remaining_rounds
 
-            BlueBoxLayout: # bottom 2 buttons
-                DollarUnitButton:
-                LifePointsUnitButton:
-        PlusButton:
+                BlueBoxLayout: # bottom 2 buttons
+                    DollarUnitButton:
+                    LifePointsUnitButton:
+            PlusButton:
 
-    # Number buttons
-    NumLayout:
-        number: 0
-        text: "SALARY"
-        pos_hint: self._get_pos_hint()
-        NumButtonInset:
-            text: str(self.parent.number)
-        AppLabel:
-            text: self.parent.text
+        # Number buttons
+        NumLayout:
+            number: 0
+            text: "SALARY"
+            pos_hint: self._get_pos_hint()
+            NumButtonInset:
+                text: str(self.parent.number)
+            AppLabel:
+                text: self.parent.text
 
-    NumLayout:
-        number: 1
-        text: "LOTTERY"
-        pos_hint: self._get_pos_hint()
-        NumButtonInset:
-            text: str(self.parent.number)
-        AppLabel:
-            text: self.parent.text
+        NumLayout:
+            number: 1
+            text: "LOTTERY"
+            pos_hint: self._get_pos_hint()
+            NumButtonInset:
+                text: str(self.parent.number)
+            AppLabel:
+                text: self.parent.text
 
-    NumLayout:
-        number: 2
-        text: "CHANCE"
-        pos_hint: self._get_pos_hint()
-        NumButtonInset:
-            text: str(self.parent.number)
-        AppLabel:
-            text: self.parent.text
+        NumLayout:
+            number: 2
+            text: "CHANCE"
+            pos_hint: self._get_pos_hint()
+            NumButtonInset:
+                text: str(self.parent.number)
+            AppLabel:
+                text: self.parent.text
 
-    NumLayout:
-        number: 3
-        text: "MARRIAGE"
-        pos_hint: self._get_pos_hint()
-        NumButtonInset:
-            text: str(self.parent.number)
-        AppLabel:
-            text: self.parent.text
+        NumLayout:
+            number: 3
+            text: "MARRIAGE"
+            pos_hint: self._get_pos_hint()
+            NumButtonInset:
+                text: str(self.parent.number)
+            AppLabel:
+                text: self.parent.text
 
-    NumButton:
-        text: "4"
-        pos_hint: self._get_pos_hint()
+        NumButton:
+            text: "4"
+            pos_hint: self._get_pos_hint()
 
-    NumLayout:
-        number: 5
-        text: "HOUSE"
-        pos_hint: self._get_pos_hint()
-        NumButtonInset:
-            text: str(self.parent.number)
-        AppLabel:
-            text: self.parent.text
+        NumLayout:
+            number: 5
+            text: "HOUSE"
+            pos_hint: self._get_pos_hint()
+            NumButtonInset:
+                text: str(self.parent.number)
+            AppLabel:
+                text: self.parent.text
 
-    NumLayout:
-        number: 6
-        text: "CAR"
-        pos_hint: self._get_pos_hint()
-        NumButtonInset:
-            text: str(self.parent.number)
-        AppLabel:
-            text: self.parent.text
+        NumLayout:
+            number: 6
+            text: "CAR"
+            pos_hint: self._get_pos_hint()
+            NumButtonInset:
+                text: str(self.parent.number)
+            AppLabel:
+                text: self.parent.text
 
-    NumLayout:
-        number: 7
-        text: "BABY"
-        pos_hint: self._get_pos_hint()
-        NumButtonInset:
-            text: str(self.parent.number)
-        AppLabel:
-            text: self.parent.text
+        NumLayout:
+            number: 7
+            text: "BABY"
+            pos_hint: self._get_pos_hint()
+            NumButtonInset:
+                text: str(self.parent.number)
+            AppLabel:
+                text: self.parent.text
 
-    NumButton:
-        text: "8"
-        pos_hint: self._get_pos_hint()
+        NumButton:
+            text: "8"
+            pos_hint: self._get_pos_hint()
 
-    NumButton:
-        text: "9"
-        pos_hint: self._get_pos_hint() 
+        NumButton:
+            text: "9"
+            pos_hint: self._get_pos_hint() 
 
-    NumLayout:
-        number: 10
-        text: "YEARS"
-        pos_hint: self._get_pos_hint()
-        NumButtonInset:
-            text: str(self.parent.number)
-        AppLabel:
-            text: self.parent.text
+        NumLayout:
+            number: 10
+            text: "YEARS"
+            pos_hint: self._get_pos_hint()
+            NumButtonInset:
+                text: str(self.parent.number)
+            AppLabel:
+                text: self.parent.text
 
 
 <BlueBoxLayout@BoxLayout>:
@@ -209,7 +213,7 @@
 
 <AppLabel@Label>:
     color: (0, 0, 0, 1)
-    font_size: 11
+    font_size: 24
     bold: True
     #text_size: self.size
     #halign: 'left'
@@ -220,7 +224,7 @@
     color: (0, 0, 0, 1)
     #bold: True
     font_name: 'RobotoMono-Regular'
-    font_size: 30
+    font_size: 40
     text_size: (self.width, None)
     shorten: True
 
@@ -229,7 +233,7 @@
     background_normal: ''
     background_color: (0.2, 0.75, 1, 1)
     color: (0, 0, 0, 1)
-    font_size: 20
+    font_size: 30
     bold: True
 
 
@@ -262,7 +266,7 @@
     size_hint: 0.1, 0.15
     padding: 5
     pos_hint: {'center_x': .5, 'center_y': .5}
-    font_size: 20
+    font_size: 30
 
 <MinusButton@RedButton>
     text: "-"
@@ -277,6 +281,7 @@
     background_normal: ''
     background_color: (0.75, 0.75, 0.75, 1)
     color: (0, 0, 0, 1)
+    font_size: 30
     bold: True
     size_hint: (0.05, 0.05)
     on_press: app.root.handle_num_input(self)
@@ -290,12 +295,12 @@
 
 
 <PlayerChooser@BoxLayout>
-    size_hint: (0.15, 0.25)
-    pos_hint: {'right': 0.95, 'top': 1}
+    #size_hint: (0.15, 0.25)
+    #pos_hint: {'right': 0.95, 'top': 1}
     orientation: 'vertical'
     spacing: 5
     AppLabel:
-        font_size: 20
+        font_size: 40
         text: 'Player'
     PlayerChoiceNone:
     PlayerChoiceRed:
@@ -310,7 +315,7 @@
 
 <PlayerLabel@Label>:
     padding: 3
-    font_size: 18
+    font_size: 30
     halign: 'left'
 
 <PlayerChoiceNone@BoxLayout>

@@ -9,7 +9,6 @@ from kivy.properties import StringProperty  # noqa: E402
 from kivy.uix.button import Button  # noqa: E402
 from kivy.uix.checkbox import CheckBox  # noqa: E402
 from kivy.uix.boxlayout import BoxLayout  # noqa: E402
-from kivy.uix.floatlayout import FloatLayout  # noqa: E402
 from kivy.uix.image import Image  # noqa: E402
 from kivy.uix.label import Label  # noqa: E402
 from pathlib import Path  # noqa: E402
@@ -18,7 +17,7 @@ from .assets import Car  # noqa: E402
 from .assets import House  # noqa: E402
 
 
-class LifePodWin(FloatLayout):
+class LifePodWin(BoxLayout):
     img_dir = StringProperty(str(Path(__file__).parent / 'img'))
 
     def __init__(self, **kwargs):
