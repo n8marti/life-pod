@@ -47,19 +47,20 @@ jobs:
           #   gstreamer1.0-plugins-base \
           #   gstreamer1.0-plugins-good
           sudo apt install -y \
-            zip \
-            unzip \
             autoconf \
-            libtool \
-            pkg-config \
+            automake \
+            cmake \
+            libffi-dev \
+            libltdl-dev \
             libncurses-dev \
             libncurses6 \
             libncursesw6 \
-            libtinfo6 \
-            cmake \
-            libffi-dev \
             libssl-dev \
-            automake
+            libtinfo6 \
+            libtool \
+            pkg-config \
+            unzip \
+            zip
 
       # Set up Java 17 required by Gradle
       - name: Setup Java 17 required by Gradle
