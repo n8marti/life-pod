@@ -21,7 +21,7 @@ jobs:
           # buildozer_version: stable  # default
 
       - name: upload artifacts to github
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: package
           path: ${{ steps.buildozer.outputs.filename }}
