@@ -17,44 +17,44 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y \
-            build-essential \
-            git \
-            ffmpeg \
-            libsdl2-dev \
-            libsdl2-image-dev \
-            libsdl2-mixer-dev \
-            libsdl2-ttf-dev \
-            libportmidi-dev \
-            libswscale-dev \
-            libavformat-dev \
-            libavcodec-dev \
-            libunwind-dev \
-            zlib1g-dev
-          sudo apt install -y \
-            libsqlite3-dev \
-            sqlite3 \
-            bzip2 \
-            libbz2-dev \
-            zlib1g-dev \
-            openssl \
-            libgdbm-dev \
-            libgdbm-compat-dev \
-            liblzma-dev \
-            libreadline-dev \
-            uuid-dev \
-            libgstreamer1.0 \
-            gstreamer1.0-plugins-base \
-            gstreamer1.0-plugins-good
+          # sudo apt install -y \
+          #   build-essential \
+          #   git \
+          #   ffmpeg \
+          #   libsdl2-dev \
+          #   libsdl2-image-dev \
+          #   libsdl2-mixer-dev \
+          #   libsdl2-ttf-dev \
+          #   libportmidi-dev \
+          #   libswscale-dev \
+          #   libavformat-dev \
+          #   libavcodec-dev \
+          #   libunwind-dev \
+          # #   zlib1g-dev
+          # sudo apt install -y \
+          #   libsqlite3-dev \
+          #   sqlite3 \
+          #   bzip2 \
+          #   libbz2-dev \
+          #   zlib1g-dev \
+          #   openssl \
+          #   libgdbm-dev \
+          #   libgdbm-compat-dev \
+          #   liblzma-dev \
+          #   libreadline-dev \
+          #   uuid-dev \
+          #   libgstreamer1.0-0 \
+          #   gstreamer1.0-plugins-base \
+          #   gstreamer1.0-plugins-good
           sudo apt install -y \
             zip \
             unzip \
             autoconf \
             libtool \
             pkg-config \
-            libncurses5-dev \
-            libncursesw5-dev \
-            libtinfo5 \
+            libncurses6-dev \
+            libncursesw6-dev \
+            libtinfo6 \
             cmake \
             libffi-dev \
             libssl-dev \
