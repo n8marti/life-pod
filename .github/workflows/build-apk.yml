@@ -9,19 +9,86 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: build with buildozer
-        uses: ArtemSBulgakov/buildozer-action@v2
-        id: buildozer
-        with:
-          command: buildozer android debug
-          # workdir: .  # default
-          # buildozer_version: stable  # default
+      # buildozer setup shared at https://stackoverflow.com/a/78946735
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            build-essential \
+            git \
+            ffmpeg \
+            libsdl2-dev \
+            libsdl2-image-dev \
+            libsdl2-mixer-dev \
+            libsdl2-ttf-dev \
+            libportmidi-dev \
+            libswscale-dev \
+            libavformat-dev \
+            libavcodec-dev \
+            libunwind-dev \
+            zlib1g-dev
+          sudo apt install -y \
+            libsqlite3-dev \
+            sqlite3 \
+            bzip2 \
+            libbz2-dev \
+            zlib1g-dev \
+            openssl \
+            libgdbm-dev \
+            libgdbm-compat-dev \
+            liblzma-dev \
+            libreadline-dev \
+            uuid-dev \
+            libgstreamer1.0 \
+            gstreamer1.0-plugins-base \
+            gstreamer1.0-plugins-good
+          sudo apt install -y \
+            zip \
+            unzip \
+            autoconf \
+            libtool \
+            pkg-config \
+            libncurses5-dev \
+            libncursesw5-dev \
+            libtinfo5 \
+            cmake \
+            libffi-dev \
+            libssl-dev \
+            automake
 
-      - name: upload artifacts to github
+      # Set up Java 17 required by Gradle
+      - name: Setup Java 17 required by Gradle
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'  # or 'zulu', 'liberica', etc.
+          java-version: '17'
+
+      # Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.12' #set your python version
+
+      # Install pip dependencies
+      - name: Install pip dependencies
+        run: |
+          pip install --upgrade pip
+          # pip install .
+          pip install buildozer cython==0.29.33
+
+      # Build with Buildozer
+      - name: Build with Buildozer
+        id: buildozer
+        run: |
+          yes | buildozer -v android debug
+
+      # Upload artifacts
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: package
-          path: ${{ steps.buildozer.outputs.filename }}
+          path: bin/*.apk
