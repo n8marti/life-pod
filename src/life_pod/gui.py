@@ -12,12 +12,15 @@ from kivy.uix.boxlayout import BoxLayout  # noqa: E402
 from kivy.uix.floatlayout import FloatLayout  # noqa: E402
 from kivy.uix.image import Image  # noqa: E402
 from kivy.uix.label import Label  # noqa: E402
+from pathlib import Path  # noqa: E402
 
 from .assets import Car  # noqa: E402
 from .assets import House  # noqa: E402
 
 
 class LifePodWin(FloatLayout):
+    img_dir = StringProperty(str(Path(__file__).parent / 'img'))
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.app = App.get_running_app()
@@ -518,7 +521,7 @@ class NumLayout(BoxLayout):
 class ScreenImage(Image):
     shown = BooleanProperty()
     source_shown = StringProperty(None)
-    source_hidden = StringProperty('img/blank.png')
+    source_hidden = StringProperty(f"{Path(__file__).parent}/img/blank.png")
 
     def hide(self):
         self.shown = False

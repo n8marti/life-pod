@@ -32,27 +32,27 @@
                     ScreenImage:
                         id: house_modest
                         size_hint_x: 1/6
-                        source_shown: "img/house-modest.png"
+                        source_shown: f"{root.img_dir}/house-modest.png"
                     ScreenImage:
                         id: house_midsized
                         size_hint_x: 1/6
-                        source_shown: "img/house-midsized.png"
+                        source_shown: f"{root.img_dir}/house-midsized.png"
                     ScreenImage:
                         id: house_mansion
                         size_hint_x: 1/6
-                        source_shown: "img/house-mansion.png"
+                        source_shown: f"{root.img_dir}/house-mansion.png"
                     ScreenImage:
                         id: car_economy
                         size_hint_x: 1/6
-                        source_shown: "img/car-economy.png"
+                        source_shown: f"{root.img_dir}/car-economy.png"
                     ScreenImage:
                         id: car_sports
                         size_hint_x: 1/6
-                        source_shown: "img/car-sports.png"
+                        source_shown: f"{root.img_dir}/car-sports.png"
                     ScreenImage:  # baby image
                         id: babies
                         size_hint_x: 1/12
-                        source_shown: "img/babies.png"
+                        source_shown: f"{root.img_dir}/babies.png"
                     ScreenLabel:
                         id: baby_count
                         size_hint_x: 1/12
@@ -61,7 +61,7 @@
                     ScreenImage:
                         size_hint_x: 1/8
                         id: dollar
-                        source_shown: 'img/dollar.png'
+                        source_shown: f"{root.img_dir}/dollar.png"
                     ScreenLabel:  # used to display messages and dollars
                         size_hint_x: 6/8
                         id: display1
@@ -70,7 +70,7 @@
                         orientation: 'vertical'
                         ScreenImage:  # wedding ring
                             id: married
-                            source_shown: "img/married.png"
+                            source_shown: f"{root.img_dir}/married.png"
                         ScreenLabel:  # +/-
                             id: sign
                 ScreenBoxLayout: # 3rd row of display screen
@@ -79,7 +79,7 @@
                     ScreenImage:  # heart
                         size_hint_x: 1/8
                         id: heart
-                        source_shown: "img/heart.png"
+                        source_shown: f"{root.img_dir}/heart.png"
                     ScreenLabel:  # used to echo user input
                         size_hint_x: 6/8
                         id: display2
@@ -88,7 +88,7 @@
                         orientation: 'vertical'
                         ScreenImage: # clock
                             id: turns
-                            source_shown: "img/clock.png"
+                            source_shown: f"{root.img_dir}/clock.png"
                         ScreenLabel:
                             id: remaining_rounds
 
