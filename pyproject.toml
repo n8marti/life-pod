@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "life_pod"
+authors = [
+    {name = "Nate Marti", email = "nate_marti@sil.org"},
+]
+description = "Replace a broken LIFE Pod from LIFE Twists & Turns"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "kivy",
+]
+version = "0.1"
+
+[project.scripts]
+life-pod = "life_pod.__main__:main"
