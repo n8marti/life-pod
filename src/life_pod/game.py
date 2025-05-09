@@ -1,3 +1,4 @@
+import sys
 from random import randint
 
 from .gui import LifePodApp
@@ -238,3 +239,16 @@ class Gui(Game):
         for p in self.players[:]:
             if p.turns_taken == 0:
                 self.players.remove(p)
+
+
+def main():
+    try:
+        if len(sys.argv) > 1 and 'cli' in sys.argv:
+            game = Cli()
+        else:
+            game = Gui()
+        game.play()
+
+    except KeyboardInterrupt:
+        print()
+        sys.exit()
