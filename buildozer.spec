@@ -7,7 +7,7 @@ title = LIFE Pod
 package.name = life_pod
 
 # (str) Package domain (needed for android/ios packaging)
-package.domain = io.github
+package.domain = io.github.n8marti
 
 # (str) Source code where the main.py live
 source.dir = src
