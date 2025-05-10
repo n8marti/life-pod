@@ -478,12 +478,12 @@ class LifePodApp(App):
         Clock.schedule_interval(self.process_input, 0.1)
 
 
-class AppButton(Button):
-    pass
-
-
 class AppCheckBox(CheckBox):
     name = StringProperty(None)
+
+
+class AppButton(Button):
+    pass
 
 
 class NumButton(AppButton):
@@ -531,6 +531,6 @@ class ScreenImage(Image):
         self.source = self.source_shown
 
 
-class ScreenLabel(Label):
+class AppLabel(Label):
     def clear(self):
         self.text = ''

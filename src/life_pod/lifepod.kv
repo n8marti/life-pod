@@ -257,20 +257,19 @@
             size: self.size
 
 
-<AppLabel@Label>:
+<AppLabel>:
     color: (0, 0, 0, 1)
-    font_size: dp(20)
+    #font_size: dp(20)
+    font_size: 14
     bold: True
-    #text_size: self.size
-    #halign: 'left'
 
-<ScreenLabel>:
+<ScreenLabel@AppLabel>:
     halign: 'right'
     valign: 'middle'
-    color: (0, 0, 0, 1)
-    #bold: True
+    bold: False
     font_name: 'RobotoMono-Regular'
-    font_size: dp(32)
+    #font_size: dp(32)
+    font_size: 24
     text_size: (self.width, None)
     shorten: True
 
@@ -278,7 +277,8 @@
 
 <AppButton>:
     color: (0, 0, 0, 1)
-    font_size: dp(28)
+    #font_size: dp(28)
+    font_size: 18
     bold: True
 
 <BlueButton@AppButton>:
@@ -309,7 +309,8 @@
 <RedButton@AppButton>:
     background_normal: ''
     background_color: (1, 0, 0.2, 1)
-    font_size: dp(30)
+    #font_size: dp(30)
+    font_size: 18
 
 <RedSquareButton@RedButton>:
     size_hint: 0.1, 0.15
@@ -329,7 +330,8 @@
     background_normal: ''
     background_color: (0.75, 0.75, 0.75, 1)
     color: (0, 0, 0, 1)
-    font_size: dp(30)
+    #font_size: dp(30)
+    font_size: 18
     bold: True
     size_hint: (0.05, 0.08)
     on_press: app.root.handle_num_input(self)
@@ -342,13 +344,18 @@
     size_hint: (0.05, 0.10)
 
 
+<PlayerLabel@AppLabel>:
+    padding: 3
+    #font_size: dp(30)
+    font_size: 24
+    bold: False
+    halign: 'left'
+
 <PlayerChooser@BoxLayout>
-    #size_hint: (0.15, 0.25)
-    #pos_hint: {'right': 0.95, 'top': 1}
     orientation: 'vertical'
     spacing: 5
-    AppLabel:
-        font_size: dp(40)
+    PlayerLabel:
+        font_size: 30
         text: 'Player'
     PlayerChoiceNone:
     PlayerChoiceRed:
@@ -360,11 +367,7 @@
 <PlayerRadio@AppCheckBox>:
     group: 'player'
     color: (0.75, 0.75, 0.75, 1)
-
-<PlayerLabel@Label>:
-    padding: 3
-    font_size: dp(30)
-    halign: 'left'
+    size: (dp(15), dp(15))
 
 <PlayerChoiceNone@BoxLayout>
     PlayerRadio:
@@ -399,10 +402,8 @@
 
 <PlayerNone@PlayerLabel>
     text: "None"
-    color: (0, 0, 0, 1)
 
 <PlayerRed@PlayerLabel>
-    #text: "red"
     background_color: (1, 0, 0, 1)
     color: self.background_color
     canvas.before:
@@ -413,7 +414,6 @@
             pos: self.pos
 
 <PlayerYellow@PlayerLabel>
-    #text: "yellow"
     background_color: (1, 1, 0, 1)
     color: self.background_color
     canvas.before:
@@ -424,7 +424,6 @@
             pos: self.pos
 
 <PlayerGreen@PlayerLabel>
-    #text: "green"
     background_color: (0, 1, 0, 1)
     color: self.background_color
     canvas.before:
@@ -435,7 +434,6 @@
             pos: self.pos
 
 <PlayerBlue@PlayerLabel>
-    #text: "blue"
     background_color: (0, 0, 1, 1)
     color: self.background_color
     canvas.before:
