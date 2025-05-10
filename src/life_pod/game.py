@@ -10,15 +10,9 @@ from .round import Round
 
 class Game:
     def __init__(self):
-        self.length = None
+        self.all_colors = ['red', 'yellow', 'green', 'blue']
         self._ask_length_text = "# of turns:"
         self._ask_length_help = "Please enter a whole number from 1-20."
-        self.current_player = None
-        self.current_round = 0
-
-        self.all_colors = ['red', 'yellow', 'green', 'blue']
-
-        self.players = None
         self._ask_which_players_text = "Which colors will be playing?"
         self._ask_which_players_help = f"Valid colors are {', '.join(self.all_colors)}."
         self._ask_player_text = "Choose player color"
@@ -27,6 +21,7 @@ class Game:
 
         self._ask_start_turn_text = "Start your turn?"
         self._ask_player_changes_text = "Update player details?"
+        self.reset()
 
     def play(self):
         raise NotImplementedError
@@ -45,6 +40,12 @@ class Game:
 
     def ask_update_player(self):
         raise NotImplementedError
+
+    def reset(self):
+        self.length = None
+        self.players = None
+        self.current_player = None
+        self.current_round = 0
 
     def show_assets(self):
         raise NotImplementedError
@@ -193,18 +194,22 @@ class Gui(Game):
         super().__init__()
         self.app = LifePodApp(self)
 
+    def play(self):
+        self._setup_game()
+        self.app.run()
+
+    def _setup_game(self):
         # Add all players initially; remove any that have not played by the
         # start of Round 2.
         self.players = []
         for p in self.all_colors:
             self._add_player(p)
 
-    def play(self):
-        self.app.run()
-
-    def ask_length(self):
-        # self.app.root_window.children[0]._ask_length(self._ask_length_text)
-        self.app.ask_length(self._ask_length_text)
+    def restart(self):
+        self.app.reset()
+        self.reset()
+        self._setup_game()
+        self.app.start_game()
 
     def round_is_complete(self):
         """This is evaluated right after any player is selected."""

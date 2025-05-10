@@ -1,4 +1,5 @@
 #:kivy 2.0
+#:import Factory kivy.factory.Factory
 
 <LifePodWin>:
     canvas.before:
@@ -8,9 +9,16 @@
             pos: self.pos
             size: self.size
 
-    PlayerChooser: # radios with player list
-        size_hint: (1/4, 0.5)
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint: (0.25, 0.75)
         pos_hint: {'center_x': 0.25, 'center_y': 0.5}
+        PlayerChooser: # radios with player list
+            size_hint_y: 0.75
+        Label:
+            size_hint_y: 0.15
+        ResetButton:
+            size_hint_y: 0.10
 
     FloatLayout: # container for full "LIFE Pod"
         size_hint_x: 3/4
@@ -95,6 +103,7 @@
                                 source_shown: f"{root.img_dir}/clock.png"
                             ScreenLabel:
                                 id: remaining_rounds
+                                font_size: dp(28)
 
                 BlueBoxLayout: # bottom 2 buttons
                     DollarUnitButton:
@@ -107,8 +116,10 @@
             text: "SALARY"
             pos_hint: self._get_pos_hint()
             NumButtonInset:
+                size_hint_y: 2/3
                 text: str(self.parent.number)
             AppLabel:
+                size_hint_y: 1/3
                 text: self.parent.text
 
         NumLayout:
@@ -116,8 +127,10 @@
             text: "LOTTERY"
             pos_hint: self._get_pos_hint()
             NumButtonInset:
+                size_hint_y: 2/3
                 text: str(self.parent.number)
             AppLabel:
+                size_hint_y: 1/3
                 text: self.parent.text
 
         NumLayout:
@@ -125,8 +138,10 @@
             text: "CHANCE"
             pos_hint: self._get_pos_hint()
             NumButtonInset:
+                size_hint_y: 2/3
                 text: str(self.parent.number)
             AppLabel:
+                size_hint_y: 1/3
                 text: self.parent.text
 
         NumLayout:
@@ -134,21 +149,32 @@
             text: "MARRIAGE"
             pos_hint: self._get_pos_hint()
             NumButtonInset:
+                size_hint_y: 2/3
                 text: str(self.parent.number)
             AppLabel:
+                size_hint_y: 1/3
                 text: self.parent.text
 
-        NumButton:
-            text: "4"
+        NumLayout:
+            number: 4
+            text: ""
             pos_hint: self._get_pos_hint()
+            NumButtonInset:
+                size_hint_y: 2/3
+                text: str(self.parent.number)
+            AppLabel:
+                size_hint_y: 1/3
+                text: str(self.parent.text)
 
         NumLayout:
             number: 5
             text: "HOUSE"
             pos_hint: self._get_pos_hint()
             NumButtonInset:
+                size_hint_y: 2/3
                 text: str(self.parent.number)
             AppLabel:
+                size_hint_y: 1/3
                 text: self.parent.text
 
         NumLayout:
@@ -156,8 +182,10 @@
             text: "CAR"
             pos_hint: self._get_pos_hint()
             NumButtonInset:
+                size_hint_y: 2/3
                 text: str(self.parent.number)
             AppLabel:
+                size_hint_y: 1/3
                 text: self.parent.text
 
         NumLayout:
@@ -165,25 +193,43 @@
             text: "BABY"
             pos_hint: self._get_pos_hint()
             NumButtonInset:
+                size_hint_y: 2/3
                 text: str(self.parent.number)
             AppLabel:
+                size_hint_y: 1/3
                 text: self.parent.text
 
-        NumButton:
-            text: "8"
+        NumLayout:
+            number: 8
+            text: ""
             pos_hint: self._get_pos_hint()
+            NumButtonInset:
+                size_hint_y: 2/3
+                text: str(self.parent.number)
+            AppLabel:
+                size_hint_y: 1/3
+                text: self.parent.text
 
-        NumButton:
-            text: "9"
-            pos_hint: self._get_pos_hint() 
+        NumLayout:
+            number: 9
+            text: ""
+            pos_hint: self._get_pos_hint()
+            NumButtonInset:
+                size_hint_y: 2/3
+                text: str(self.parent.number)
+            AppLabel:
+                size_hint_y: 1/3
+                text: self.parent.text
 
         NumLayout:
             number: 10
             text: "YEARS"
             pos_hint: self._get_pos_hint()
             NumButtonInset:
+                size_hint_y: 2/3
                 text: str(self.parent.number)
             AppLabel:
+                size_hint_y: 1/3
                 text: self.parent.text
 
 
@@ -213,7 +259,7 @@
 
 <AppLabel@Label>:
     color: (0, 0, 0, 1)
-    font_size: 24
+    font_size: dp(20)
     bold: True
     #text_size: self.size
     #halign: 'left'
@@ -224,18 +270,20 @@
     color: (0, 0, 0, 1)
     #bold: True
     font_name: 'RobotoMono-Regular'
-    font_size: 40
+    font_size: dp(32)
     text_size: (self.width, None)
     shorten: True
 
 
-<BlueButton>:
-    background_normal: ''
-    background_color: (0.2, 0.75, 1, 1)
+
+<AppButton>:
     color: (0, 0, 0, 1)
-    font_size: 30
+    font_size: dp(28)
     bold: True
 
+<BlueButton@AppButton>:
+    background_normal: ''
+    background_color: (0.2, 0.75, 1, 1)
 
 <EnterButton@BlueButton>:
     text: "Enter"
@@ -258,21 +306,21 @@
     on_press: app.root.handle_life_points()
 
 
-<RedButton>:
+<RedButton@AppButton>:
     background_normal: ''
     background_color: (1, 0, 0.2, 1)
-    color: (0, 0, 0, 1)
-    bold: True
+    font_size: dp(30)
+
+<RedSquareButton@RedButton>:
     size_hint: 0.1, 0.15
     padding: 5
     pos_hint: {'center_x': .5, 'center_y': .5}
-    font_size: 30
 
-<MinusButton@RedButton>
+<MinusButton@RedSquareButton>
     text: "-"
     on_press: app.root.handle_minus()
 
-<PlusButton@RedButton>
+<PlusButton@RedSquareButton>
     text: "+"
     on_press: app.root.handle_plus()
 
@@ -281,9 +329,9 @@
     background_normal: ''
     background_color: (0.75, 0.75, 0.75, 1)
     color: (0, 0, 0, 1)
-    font_size: 30
+    font_size: dp(30)
     bold: True
-    size_hint: (0.05, 0.05)
+    size_hint: (0.05, 0.08)
     on_press: app.root.handle_num_input(self)
 
 <NumButtonInset@NumButton>:
@@ -300,7 +348,7 @@
     orientation: 'vertical'
     spacing: 5
     AppLabel:
-        font_size: 40
+        font_size: dp(40)
         text: 'Player'
     PlayerChoiceNone:
     PlayerChoiceRed:
@@ -315,7 +363,7 @@
 
 <PlayerLabel@Label>:
     padding: 3
-    font_size: 30
+    font_size: dp(30)
     halign: 'left'
 
 <PlayerChoiceNone@BoxLayout>
@@ -396,3 +444,19 @@
         Rectangle:
             size: self.size
             pos: self.pos
+
+<ResetButton@RedButton>
+    text: "Reset game"
+    on_release: Factory.ConfirmationPopup().open()
+
+<ConfirmationPopup@Popup>
+    title: "Are you sure you want to reset the game?"
+    title_size: dp(30)
+    size_hint: (1/3, 1/4)
+    BoxLayout:
+        AppButton:
+            text: "No"
+            on_release: root.dismiss()
+        RedButton:
+            text: "Yes"
+            on_release: app.root.handle_reset()

@@ -19,6 +19,7 @@ from .assets import House  # noqa: E402
 
 class LifePodWin(BoxLayout):
     img_dir = StringProperty(str(Path(__file__).parent / 'img'))
+    title = StringProperty("LIFE Pod")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -118,6 +119,15 @@ class LifePodWin(BoxLayout):
                 # Load player.
                 self.app.game.current_player = self.app.game._get_player(obj.name, self.app.game.players)
                 self.app.show_assets()
+
+    def handle_reset(self):
+        """Ask user to confirm whether or not to reset the game."""
+        # Find & dismiss popup window among parent window children.
+        for c in self.get_parent_window().children:
+            if c is not self:
+                c.dismiss()
+                break
+        self.app.game.restart()
 
     def clear_display(self):
         self._hide_houses()
@@ -273,12 +283,16 @@ class LifePodApp(App):
         super().__init__(**kwargs)
         self.game = game
 
-        self.active_choice = False
-        self.active_input = False
-        self.pending_choice = None
-        self.pending_input = None
-        self.pending_sign = None
-        self.pending_action = None
+    def ask_length(self, text):
+        self.show_info(text, clear=True)
+        self.pending_action = self.set_game_length
+        self._wait_input()
+
+    def ask_player_salary(self):
+        if self._verify_player():
+            self.show_info(self.game._ask_update_salary)
+            self.pending_action = self.set_player_salary
+            self._wait_input()
 
     def build(self):
         return LifePodWin()
@@ -294,8 +308,7 @@ class LifePodApp(App):
         self.show_assets()
 
     def on_start(self):
-        self.root.clear_display()
-        self.game.ask_length()
+        self.start_game()
 
     def process_input(self, dt):
         if self.pending_input and not self.active_input:
@@ -314,6 +327,26 @@ class LifePodApp(App):
             self.reset_pending()
             return False
 
+    def reset(self):
+        self.root.clear_display()
+        self.active_choice = False
+        self.active_input = False
+        self.reset_pending()
+
+    def reset_pending(self):
+        self.pending_choice = None
+        self.pending_input = None
+        self.pending_sign = None
+        self.pending_action = None
+
+    def set_game_length(self):
+        self.game.length = int(self.pending_input)
+        self.game.start_next_round()
+
+    def set_player_salary(self):
+        if self._verify_player():
+            self.game.current_player.set_salary(int(self.pending_input))
+            self.show_assets()
 
     def show_assets(self):
         self.root._show_turns()
@@ -345,11 +378,9 @@ class LifePodApp(App):
             self.root.clear_display()
         self.root.set_display1_text(text)
 
-    def reset_pending(self):
-        self.pending_choice = None
-        self.pending_input = None
-        self.pending_sign = None
-        self.pending_action = None
+    def start_game(self):
+        self.reset()
+        self.ask_length(self.game._ask_length_text)
 
     def update_player_babies(self):
         if self._verify_player():
@@ -372,26 +403,6 @@ class LifePodApp(App):
         if self._verify_player():
             self.game.current_player.set_marriage(self.pending_choice)
             self.reset_pending()
-            self.show_assets()
-
-    def ask_length(self, text):
-        self.show_info(text, clear=True)
-        self.pending_action = self.set_game_length
-        self._wait_input()
-
-    def set_game_length(self):
-        self.game.length = int(self.pending_input)
-        self.game.start_next_round()
-
-    def ask_player_salary(self):
-        if self._verify_player():
-            self.show_info(self.game._ask_update_salary)
-            self.pending_action = self.set_player_salary
-            self._wait_input()
-    
-    def set_player_salary(self):
-        if self._verify_player():
-            self.game.current_player.set_salary(int(self.pending_input))
             self.show_assets()
 
     def update_remaining_rounds(self, value):
@@ -468,22 +479,11 @@ class LifePodApp(App):
 
 
 class AppButton(Button):
-    def _get_win(self):
-        return self.get_root_window().children[0]
+    pass
 
 
 class AppCheckBox(CheckBox):
     name = StringProperty(None)
-
-    def _get_win(self):
-        return self.get_root_window().children[0]
-
-
-class BlueButton(AppButton):
-    pass
-
-class RedButton(AppButton):
-    pass
 
 
 class NumButton(AppButton):
