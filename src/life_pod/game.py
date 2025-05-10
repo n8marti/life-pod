@@ -46,6 +46,7 @@ class Game:
         self.players = None
         self.current_player = None
         self.current_round = 0
+        self.jackpot = None  # for lottery
 
     def show_assets(self):
         raise NotImplementedError
@@ -67,9 +68,11 @@ class Game:
 
     def _chance(self):
         return self._roll(min=0, max=2)
-    
-    def _lottery(self):
-        return self._roll(min=1, max=10)
+
+    def _increase_jackpot(self):
+        if self.jackpot is None:
+            self.jackpot = 0
+        self.jackpot += randint(10, 50) * 10000
 
     def _roll(self, min=1, max=10):
         return randint(min, max)

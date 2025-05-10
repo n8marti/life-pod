@@ -118,6 +118,10 @@ class LifePodWin(BoxLayout):
             else:
                 # Load player.
                 self.app.game.current_player = self.app.game._get_player(obj.name, self.app.game.players)
+                # Add lottery jackpot to player if it is set.
+                if self.app.game.jackpot is not None:
+                    self.app.game.current_player.update_dollars(self.app.game.jackpot)
+                    self.app.game.jackpot = None
                 self.app.show_assets()
 
     def handle_reset(self):
@@ -129,7 +133,7 @@ class LifePodWin(BoxLayout):
                 break
         self.app.game.restart()
 
-    def clear_display(self):
+    def clear_display(self, *args):  # *args needed b/c of run after delay
         self._hide_houses()
         self._hide_cars()
         self._reset_babies()
@@ -145,6 +149,9 @@ class LifePodWin(BoxLayout):
 
     def set_display1_text(self, text):
         self.ids.display1.text = str(text).upper()
+
+    def set_display2_text(self, text):
+        self.ids.display2.text = str(text).upper()
 
     def show_game_over(self):
         self.set_display1_text("game over")
@@ -265,9 +272,9 @@ class LifePodWin(BoxLayout):
                 self.clear_display()
                 self.app.ask_player_salary()
             case 'lottery':
-                pass
+                self.app.play_lottery()
             case 'chance':
-                pass
+                self.app.show_info(self.app.game._roll(1, 2), clear=True, temp=True)
             case 'marriage':
                 self._choose_marriage()
             case 'baby':
@@ -310,6 +317,11 @@ class LifePodApp(App):
     def on_start(self):
         self.start_game()
 
+    def play_lottery(self):
+        self.game._increase_jackpot()
+        self.show_info(self.game.jackpot, clear=True)
+        self.root.set_display2_text(self.game._roll())
+
     def process_input(self, dt):
         if self.pending_input and not self.active_input:
             print(f"received input: {self.pending_input}; running: {self.pending_action.__name__}")
@@ -348,22 +360,24 @@ class LifePodApp(App):
             self.game.current_player.set_salary(int(self.pending_input))
             self.show_assets()
 
-    def show_assets(self):
+    def show_assets(self, *args):
+        self.root.clear_display()
         self.root._show_turns()
-        for k, v in self.game.current_player.get_assets().items():
-            match k:
-                case 'cars':
-                    self._show_assets(v)
-                case 'babies':
-                    self._show_babies(v)
-                case 'houses':
-                    self._show_assets(v)
-                case 'married':
-                    self._show_married(v)
-                case 'dollars':
-                    self._show_dollars(v)
-                case 'life points':
-                    self._show_life_points(v)
+        if self.game.current_player is not None:
+            for k, v in self.game.current_player.get_assets().items():
+                match k:
+                    case 'cars':
+                        self._show_assets(v)
+                    case 'babies':
+                        self._show_babies(v)
+                    case 'houses':
+                        self._show_assets(v)
+                    case 'married':
+                        self._show_married(v)
+                    case 'dollars':
+                        self._show_dollars(v)
+                    case 'life points':
+                        self._show_life_points(v)
 
     def show_error(self, text):
         self.reset_pending()
@@ -373,10 +387,12 @@ class LifePodApp(App):
         self.root.show_game_over()
         self._run_after(self._convert_assets, 3)
 
-    def show_info(self, text, clear=False):
+    def show_info(self, text, clear=False, temp=False):
         if clear:
             self.root.clear_display()
         self.root.set_display1_text(text)
+        if temp:
+            self._run_after(self.show_assets, 3)
 
     def start_game(self):
         self.reset()
@@ -447,7 +463,7 @@ class LifePodApp(App):
 
     def _show_dollars(self, value):
         self.root.ids.dollar.show()
-        self.show_info(str(value))
+        self.show_info(value)
 
     def _show_life_points(self, value):
         self.root.ids.heart.show()
