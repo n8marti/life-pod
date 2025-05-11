@@ -53,8 +53,8 @@ fi
 if [[ $device == a13 ]]; then
     resolution=2408x1080
     dpi=377
-    density=2.35
-    # scale=1
+    density=2.75 # real number is 2.35, but fudged to get correct emulated display
+    scale=0.4
 elif [[ $device == a10 ]]; then
     resolution=1920x1200
     dpi=241
@@ -67,6 +67,14 @@ elif [[ $devcie == a7lite ]]; then
     # scale=1
 fi
 
-export KIVY_DPI=$((dpi * scale))
-export KIVY_METRICS_DENSITY=$((density * scale))
-cd "$repo" && python -m src.life_pod --size="$resolution"
+
+w=$(echo "${resolution%x*}")
+h=$(echo "${resolution#*x}")
+w_scaled=$(printf "%.0f" $(echo "$w * $scale" | bc))
+h_scaled=$(printf "%.0f" $(echo "$h * $scale" | bc))
+dpi_scaled=$(printf "%.0f" $(echo "$dpi * $scale" | bc))
+density_scaled=$(echo "scale=2;$density * $scale" | bc)
+
+export KIVY_DPI="$dpi_scaled"
+export KIVY_METRICS_DENSITY="$density_scaled"
+cd "$repo" && python -m src.life_pod --size="${w_scaled}x${h_scaled}"

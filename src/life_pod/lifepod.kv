@@ -103,6 +103,7 @@
                                 source_shown: f"{root.img_dir}/clock.png"
                             ScreenLabel:
                                 id: remaining_rounds
+                                font_size: dp(20)
 
                 BlueBoxLayout: # bottom 2 buttons
                     DollarUnitButton:
@@ -266,7 +267,7 @@
     valign: 'middle'
     bold: False
     font_name: 'RobotoMono-Regular'
-    font_size: dp(28)
+    font_size: dp(24)
     text_size: (self.width, None)
     shorten: True
 
@@ -442,12 +443,14 @@
 
 <ConfirmationPopup@Popup>
     title: "Are you sure you want to reset the game?"
-    title_size: dp(30)
+    title_size: dp(18)
     size_hint: (1/3, 1/4)
     BoxLayout:
         AppButton:
+            font_size: dp(18)
             text: "No"
             on_release: root.dismiss()
         RedButton:
+            font_size: dp(18)
             text: "Yes"
             on_release: app.root.handle_reset()
