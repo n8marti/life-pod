@@ -58,13 +58,12 @@ if [[ $device == a13 ]]; then
 elif [[ $device == a10 ]]; then
     resolution=1920x1200
     dpi=241
-    density=1.5
-    # scale=1
+    density=1.5  # real number is 1.5
+    scale=0.6
 elif [[ $devcie == a7lite ]]; then
     resolution=1340x800
     dpi=178
     density=1
-    # scale=1
 fi
 
 
