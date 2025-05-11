@@ -256,10 +256,9 @@
             size: self.size
 
 
-<AppLabel>:
+<AppLabel>:  # used for secondary functions of number buttons
     color: (0, 0, 0, 1)
-    #font_size: dp(20)
-    font_size: 14
+    font_size: dp(12)
     bold: True
 
 <ScreenLabel@AppLabel>:
@@ -267,8 +266,7 @@
     valign: 'middle'
     bold: False
     font_name: 'RobotoMono-Regular'
-    #font_size: dp(32)
-    font_size: 24
+    font_size: dp(28)
     text_size: (self.width, None)
     shorten: True
 
@@ -276,13 +274,13 @@
 
 <AppButton>:
     color: (0, 0, 0, 1)
-    #font_size: dp(28)
-    font_size: 18
+    font_size: dp(24)
     bold: True
 
 <BlueButton@AppButton>:
     background_normal: ''
     background_color: (0.2, 0.75, 1, 1)
+    font_size: dp(20)
 
 <EnterButton@BlueButton>:
     text: "Enter"
@@ -308,8 +306,7 @@
 <RedButton@AppButton>:
     background_normal: ''
     background_color: (1, 0, 0.2, 1)
-    #font_size: dp(30)
-    font_size: 18
+    font_size: dp(24)
 
 <RedSquareButton@RedButton>:
     size_hint: 0.1, 0.15
@@ -329,8 +326,6 @@
     background_normal: ''
     background_color: (0.75, 0.75, 0.75, 1)
     color: (0, 0, 0, 1)
-    #font_size: dp(30)
-    font_size: 18
     bold: True
     size_hint: (0.05, 0.08)
     on_press: app.root.handle_num_input(self)
@@ -345,8 +340,7 @@
 
 <PlayerLabel@AppLabel>:
     padding: 3
-    #font_size: dp(30)
-    font_size: 24
+    font_size: dp(24)
     bold: False
     halign: 'left'
 
@@ -354,7 +348,7 @@
     orientation: 'vertical'
     spacing: 5
     PlayerLabel:
-        font_size: 30
+        font_size:  dp(30)
         text: 'Player'
     PlayerChoiceNone:
     PlayerChoiceRed:
